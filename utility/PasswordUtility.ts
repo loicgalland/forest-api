@@ -1,8 +1,8 @@
-import  bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
-import {SECRET_KEY} from "../config";
 import {Request} from "express";
 import {AuthPayload} from "../dto/Auth.dto";
+import {SECRET_KEY} from "../config";
 
 export const generateSalt =  () => {
     return  bcrypt.genSalt()

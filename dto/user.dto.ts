@@ -5,3 +5,14 @@ export interface CreateUserInputs {
     password: string;
 }
 
+
+export interface LoginUserInputs {
+    email: string,
+    password: string,
+}
+
+export interface UserPaylaod {
+    _id: string,
+    email: string,
+    role: string,
+}
