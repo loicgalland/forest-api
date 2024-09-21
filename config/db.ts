@@ -1,0 +1,1 @@
+export const MONGO_URI = 'mongodb+srv://loicG:35cb1337@forest.jikz8.mongodb.net/?retryWrites=true&w=majority&appName=Forest'
