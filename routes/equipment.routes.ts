@@ -1,12 +1,12 @@
 import express from "express";
 import {createEquipment, deleteEquipment, getAllEquipments, updateEquipment} from "../controllers";
-import {isAuthenticated} from "../middlewares";
+import {isAdminAuthenticated} from "../middlewares/ensureAdminAuthenticated.middleware";
 
 
 const router = express.Router();
 
 router.get("/", getAllEquipments);
-router.use(isAuthenticated);
+router.use(isAdminAuthenticated);
 router.post("/", createEquipment);
 router.patch('/:id', updateEquipment);
 router.delete("/:id", deleteEquipment);

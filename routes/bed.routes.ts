@@ -1,13 +1,13 @@
 import express from "express";
 import {createBed, deleteBed, getAllBeds, updateBed} from "../controllers";
-import {isAuthenticated} from "../middlewares";
+import {isAdminAuthenticated} from "../middlewares/ensureAdminAuthenticated.middleware";
 
 
 const router = express.Router();
 
 router.get("/", getAllBeds);
 
-router.use(isAuthenticated);
+router.use(isAdminAuthenticated);
 router.post("/", createBed);
 router.patch('/:id', updateBed);
 router.delete("/:id", deleteBed);
