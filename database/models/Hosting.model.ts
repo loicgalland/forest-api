@@ -1,10 +1,16 @@
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, Schema, Types} from "mongoose";
+
+
+interface BedQuantity {
+    bed: Types.ObjectId;
+    quantity: number;
+}
 
 export interface HostingDoc extends Document {
     name: string,
     description: string,
     isSpotlight: boolean,
-
+    beds: BedQuantity[];
 }
 
 const HostingSchema = new Schema<HostingDoc>({
@@ -19,7 +25,20 @@ const HostingSchema = new Schema<HostingDoc>({
     isSpotlight: {
         type: Boolean,
         required: true,
-    }
+    },
+    beds: [
+        {
+            bed: {
+                type: Schema.Types.ObjectId,
+                ref: "Bed",
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            }
+        }
+    ],
 }, {
     timestamps: true,
     toJSON: {
