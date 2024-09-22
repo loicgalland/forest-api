@@ -6,11 +6,17 @@ interface BedQuantity {
     quantity: number;
 }
 
+interface EquipmentQuantity {
+    equipment: Types.ObjectId;
+    quantity: number;
+}
+
 export interface HostingDoc extends Document {
     name: string,
     description: string,
     isSpotlight: boolean,
     beds: BedQuantity[];
+    equipments: EquipmentQuantity[];
 }
 
 const HostingSchema = new Schema<HostingDoc>({
@@ -31,6 +37,19 @@ const HostingSchema = new Schema<HostingDoc>({
             bed: {
                 type: Schema.Types.ObjectId,
                 ref: "Bed",
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            }
+        }
+    ],
+    equipments: [
+        {
+            equipment: {
+                type: Schema.Types.ObjectId,
+                ref: "Equipment",
                 required: true,
             },
             quantity: {

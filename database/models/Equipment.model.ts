@@ -19,6 +19,8 @@ const EquipmentSchema = new Schema<EquipmentDoc>({
     toJSON: {
         transform(doc, ret, option) {
             delete ret.__v;
+            delete ret.createdAt;
+            delete ret.updatedAt;
         }
     }
 })

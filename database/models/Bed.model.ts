@@ -19,8 +19,8 @@ const BedSchema = new Schema<BedDoc>({
     toJSON: {
         transform(doc, ret, option) {
             delete ret.__v;
-            delete ret.createdAt
-            delete ret.updatedAt
+            delete ret.createdAt;
+            delete ret.updatedAt;
         }
     }
 })
