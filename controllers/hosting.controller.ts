@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, Equipment, Hosting} from "../database/models";
+import {Price} from "../database/models/Price.model";
 
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,6 +11,8 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         if (existingHosting) {
             return res.jsonError('This hosting already exist', 409)
         }
+
+
         const beds = await Promise.all(body.beds.map(async (bed) => {
             const { bedId, quantity } = bed;
             const existingBed = await Bed.findById(bedId);
@@ -38,10 +41,28 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             };
         }));
 
+        const prices = await Promise.all(body.prices.map(async (price) => {
+            const { htAmount, startDate, endDate } = price;
+
+            if (!htAmount || !startDate || !endDate) {
+                throw new Error("Price validation failed: htAmount, startDate, and endDate are required.");
+            }
+
+            const newPrice = new Price({
+                htAmount,
+                startDate,
+                endDate
+            });
+
+            await newPrice.save();
+            return { price: newPrice };
+        }));
+
         const newHosting = new Hosting({
             ...body,
             beds,
             equipments,
+            prices,
         });
         await newHosting.save();
         return res.jsonSuccess(newHosting, 201)

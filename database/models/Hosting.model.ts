@@ -1,22 +1,30 @@
 import mongoose, {Document, Schema, Types} from "mongoose";
 
 
-interface BedQuantity {
+interface BedArray {
     bed: Types.ObjectId;
     quantity: number;
 }
 
-interface EquipmentQuantity {
+interface EquipmentArray {
     equipment: Types.ObjectId;
     quantity: number;
 }
+
+interface PriceArray {
+    price: Types.ObjectId;
+}
+
 
 export interface HostingDoc extends Document {
     name: string,
     description: string,
     isSpotlight: boolean,
-    beds: BedQuantity[];
-    equipments: EquipmentQuantity[];
+    rating: number,
+    images: [string],
+    beds: BedArray[];
+    equipments: EquipmentArray[];
+    prices: PriceArray[]
 }
 
 const HostingSchema = new Schema<HostingDoc>({
@@ -31,6 +39,14 @@ const HostingSchema = new Schema<HostingDoc>({
     isSpotlight: {
         type: Boolean,
         required: true,
+    },
+    rating:{
+        type: Number,
+        default: 0.0,
+    },
+    images:{
+        type: [String],
+        default: [],
     },
     beds: [
         {
@@ -58,10 +74,19 @@ const HostingSchema = new Schema<HostingDoc>({
             }
         }
     ],
+    prices: [
+        {
+            price: {
+                type: Schema.Types.ObjectId,
+                ref: "Price",
+                required: true,
+            }
+        }
+    ]
 }, {
     timestamps: true,
     toJSON: {
-        transform(doc, ret, option) {
+        transform(doc, ret) {
             delete ret.__v;
         }
     }
