@@ -25,6 +25,8 @@ export interface HostingDoc extends Document {
     beds: BedArray[];
     equipments: EquipmentArray[];
     prices: PriceArray[]
+
+
 }
 
 const HostingSchema = new Schema<HostingDoc>({

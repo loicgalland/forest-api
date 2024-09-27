@@ -11,7 +11,8 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         if (existingHosting) {
             return res.jsonError('This hosting already exist', 409)
         }
-
+        const files = req.files as [Express.Multer.File] | undefined;
+        const images = files ? files.map(file => file.filename) : [];
 
         const beds = await Promise.all(body.beds.map(async (bed) => {
             const { bedId, quantity } = bed;
@@ -63,6 +64,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             beds,
             equipments,
             prices,
+            images,
         });
         await newHosting.save();
         return res.jsonSuccess(newHosting, 201)
@@ -73,19 +75,29 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
 
 export const getAllHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const hostings = await Hosting.find({}).populate({
-            path: 'beds',
-            populate: {
-                path: 'bed',
-                model: 'Bed'
-            }
-        }).populate({
-            path: 'equipments',
-            populate: {
-                path: 'equipment',
-                model: 'Equipment'
-            }
-        });
+        const hostings = await Hosting.find({})
+            .populate({
+                path: 'beds',
+                populate: {
+                    path: 'bed',
+                    model: 'Bed'
+                }
+            })
+            .populate({
+                path: 'equipments',
+                populate: {
+                    path: 'equipment',
+                    model: 'Equipment'
+                    }
+            })
+            .populate({
+                path: 'prices',
+                populate: {
+                    path: 'price',
+                    model: 'Price'
+                }
+            })
+            .lean();
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
         return res.jsonError('No hosting found', 404)
@@ -121,6 +133,40 @@ export const deleteHosting = async (req: Request, res: Response, next: NextFunct
     try {
         await Hosting.findById(id);
         return res.jsonSuccess('Hosting delete', 404)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getSpotlightHosting = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const hostings = await Hosting.find({ isSpotlight: true}).populate({
+            path: 'beds',
+            populate: {
+                path: 'bed',
+                model: 'Bed'
+            }
+        })
+            .populate({
+                path: 'equipments',
+                populate: {
+                    path: 'equipment',
+                    model: 'Equipment'
+                }
+            })
+            .populate({
+                path: 'prices',
+                populate: {
+                    path: 'price',
+                    model: 'Price'
+                }
+            })
+            .lean();
+        
+
+        if (hostings.length) return res.jsonSuccess(hostings, 200)
+        return res.jsonError('No hosting found', 404)
 
     } catch (error) {
         next(error)
