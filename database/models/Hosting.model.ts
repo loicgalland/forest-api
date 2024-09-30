@@ -20,7 +20,7 @@ export interface HostingDoc extends Document {
     name: string,
     description: string,
     isSpotlight: boolean,
-    rating: number,
+    visible: boolean,
     images: [string],
     beds: BedArray[];
     equipments: EquipmentArray[];
@@ -42,9 +42,9 @@ const HostingSchema = new Schema<HostingDoc>({
         type: Boolean,
         required: true,
     },
-    rating:{
-        type: Number,
-        default: 0.0,
+    visible: {
+      type: Boolean,
+      required: true,
     },
     images:{
         type: [String],
@@ -88,8 +88,10 @@ const HostingSchema = new Schema<HostingDoc>({
 }, {
     timestamps: true,
     toJSON: {
-        transform(doc, ret) {
+        transform(doc, ret, option) {
             delete ret.__v;
+            delete ret.createdAt;
+            delete ret.updatedAt;
         }
     }
 })

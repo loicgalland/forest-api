@@ -22,7 +22,7 @@ const PriceSchema = new Schema<PriceDoc>({
 }, {
     timestamps: true,
     toJSON: {
-        transform(doc, ret) {
+        transform(doc, ret, option) {
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;

@@ -75,7 +75,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
 
 export const getAllHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const hostings = await Hosting.find({})
+        const hostings = await Hosting.find({visible: true})
             .populate({
                 path: 'beds',
                 populate: {
@@ -141,7 +141,7 @@ export const deleteHosting = async (req: Request, res: Response, next: NextFunct
 
 export const getSpotlightHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const hostings = await Hosting.find({ isSpotlight: true}).populate({
+        const hostings = await Hosting.find({ visible: true, isSpotlight: true}).populate({
             path: 'beds',
             populate: {
                 path: 'bed',
@@ -163,7 +163,7 @@ export const getSpotlightHosting = async (req: Request, res: Response, next: Nex
                 }
             })
             .lean();
-        
+
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
         return res.jsonError('No hosting found', 404)
