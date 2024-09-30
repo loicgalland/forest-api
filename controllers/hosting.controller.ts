@@ -107,6 +107,43 @@ export const getAllHosting = async (req: Request, res: Response, next: NextFunct
     }
 }
 
+export const getOneHosting = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.params;
+        const {name, description, isSpotlight, beds, equipments} = req.body;
+
+        const hosting = await Hosting.findById(id)
+            .populate({
+                path: 'beds',
+                populate: {
+                    path: 'bed',
+                    model: 'Bed'
+                }
+            })
+            .populate({
+                path: 'equipments',
+                populate: {
+                    path: 'equipment',
+                    model: 'Equipment'
+                }
+            })
+            .populate({
+                path: 'prices',
+                populate: {
+                    path: 'price',
+                    model: 'Price'
+                }
+            })
+            .lean();
+
+        if (hosting) return res.jsonSuccess(hosting, 200)
+        return res.jsonError('No hosting found', 404)
+
+    } catch (error){
+        next(error)
+    }
+}
+
 export const updateHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
     const {name, description, isSpotlight, beds, equipments} = req.body;
