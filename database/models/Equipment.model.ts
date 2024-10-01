@@ -2,7 +2,6 @@ import mongoose, {Document, Schema} from "mongoose";
 
 export interface EquipmentDoc extends Document {
     name: string,
-    description: string,
     type: string
 }
 
@@ -11,10 +10,7 @@ const EquipmentSchema = new Schema<EquipmentDoc>({
         type: String,
         required: true,
     },
-    description: {
-        type: String,
-        required: true,
-    },
+
     type: {
         type: String,
         required: true,

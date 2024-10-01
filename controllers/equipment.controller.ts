@@ -49,7 +49,6 @@ export const updateEquipment = async (req: Request, res: Response, next: NextFun
             return res.jsonError('Equipment not found', 404)
         }
         if (name !== undefined) equipment.name = name;
-        if (description !== undefined) equipment.description = description;
         const equipmentSaved = await equipment.save();
         return res.jsonSuccess(equipmentSaved, 200)
     } catch (error) {

@@ -7,13 +7,14 @@ export class CreateEquipmentInputs {
 
     @IsString()
     @IsNotEmpty()
-    description: string;
+    type: string;
 }
 
 export class UpdateEquipmentInputs {
     @IsString()
     name?: string;
 
+    @IsNotEmpty()
     @IsString()
-    description?: string;
+    type: string;
 }
