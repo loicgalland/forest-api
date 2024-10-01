@@ -2,8 +2,8 @@ import {NextFunction, Request, Response} from 'express';
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, Equipment, Hosting} from "../database/models";
 import {Price} from "../database/models/Price.model";
-import {CreatePriceInputs} from "../dto/price.dto";
 import {ValidatorRequest} from "../utility/validate-request";
+import {calculateCapacity} from "../services/hosting.service";
 
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,20 +21,6 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         }
         const files = req.files as [Express.Multer.File] | undefined;
         const images = files ? files.map(file => file.filename) : [];
-
-        const beds = await Promise.all(input.beds.map(async (bed) => {
-            const { bedId, quantity } = bed;
-            const existingBed = await Bed.findById(bedId);
-
-            if (!existingBed) {
-                return res.status(404).json({ error: `Bed with ID ${bedId} not found` });
-            }
-
-            return {
-                bed: bedId,
-                quantity
-            };
-        }))
 
         const equipments = await Promise.all(input.equipments.map(async (equipment) => {
             const { equipmentId, quantity } = equipment;
@@ -67,13 +53,33 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             return { price: newPrice };
         }));
 
+        const beds = await Promise.all(input.beds.map(async (bed) => {
+            const { bedId, quantity } = bed;
+            const existingBed = await Bed.findById(bedId);
+
+            if (!existingBed) {
+                return res.status(404).json({ error: `Bed with ID ${bedId} not found` });
+            }
+
+            return {
+                bed: bedId,
+                quantity
+            };
+        }))
+
+        const totalCapacity = await calculateCapacity(beds)
+
         const newHosting = new Hosting({
             ...input,
             beds,
             equipments,
             prices,
             images,
+            capacity: totalCapacity,
         });
+
+
+
         await newHosting.save();
         return res.jsonSuccess(newHosting, 201)
     } catch (error) {

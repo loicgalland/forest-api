@@ -1,5 +1,5 @@
 import {CreatePriceInputs} from "./price.dto";
-import {IsBoolean, IsNotEmpty, IsString, ValidateNested} from "class-validator";
+import {IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested} from "class-validator";
 
 export interface CreateBedInput {
     bedId: string;

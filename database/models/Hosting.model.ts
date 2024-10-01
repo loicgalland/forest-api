@@ -1,7 +1,6 @@
 import mongoose, {Document, Schema, Types} from "mongoose";
 
-
-interface BedArray {
+export interface BedArray {
     bed: Types.ObjectId;
     quantity: number;
 }
@@ -22,12 +21,12 @@ export interface HostingDoc extends Document {
     isSpotlight: boolean,
     visible: boolean,
     images: [string],
+    capacity: number,
     beds: BedArray[];
     equipments: EquipmentArray[];
     prices: PriceArray[]
-
-
 }
+
 
 const HostingSchema = new Schema<HostingDoc>({
     name: {
@@ -45,6 +44,10 @@ const HostingSchema = new Schema<HostingDoc>({
     visible: {
       type: Boolean,
       required: true,
+    },
+    capacity: {
+        type: Number,
+        required: false,
     },
     images:{
         type: [String],
@@ -95,6 +98,8 @@ const HostingSchema = new Schema<HostingDoc>({
         }
     }
 })
+
+
 
 const Hosting = mongoose.model<HostingDoc>('Hosting', HostingSchema);
 export {Hosting};
