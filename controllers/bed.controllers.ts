@@ -1,17 +1,24 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreateBedInputs} from "../dto/bed.dto";
 import {Bed} from "../database/models";
+import {ValidatorRequest} from "../utility/validate-request";
 
 
 export const createBed = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const body = <CreateBedInputs>req.body;
-        const existingBed = await Bed.findOne({name: body.name});
+        const body = req.body as CreateBedInputs;
+        const {errors, input} = await ValidatorRequest(CreateBedInputs, body);
+
+        if(errors) {
+            return res.jsonError(errors, 400)
+        };
+
+        const existingBed = await Bed.findOne({name: input.name});
         if (existingBed) {
             return res.jsonError('This bed already exist', 409)
         }
 
-        const newBed = new Bed({...body})
+        const newBed = new Bed({...input})
         await newBed.save();
         return res.jsonSuccess(newBed, 201)
     } catch (error) {

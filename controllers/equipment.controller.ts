@@ -1,17 +1,26 @@
 import {NextFunction, Request, Response} from 'express';
 import {Equipment} from "../database/models";
 import {CreateEquipmentInputs} from "../dto/equipment.dto";
+import {CreateBedInputs} from "../dto/bed.dto";
+import {ValidatorRequest} from "../utility/validate-request";
 
 
 export const createEquipment = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const body = <CreateEquipmentInputs>req.body;
-        const existingEquipment = await Equipment.findOne({name: body.name});
+
+        const body = req.body as CreateEquipmentInputs;
+        const {errors, input} = await ValidatorRequest(CreateEquipmentInputs, body);
+
+        if(errors) {
+            return res.jsonError(errors, 400)
+        };
+
+        const existingEquipment = await Equipment.findOne({name: input.name});
         if (existingEquipment) {
             return res.jsonError('This equipment already exist', 409)
         }
 
-        const newEquipment = new Equipment({...body})
+        const newEquipment = new Equipment({...input})
         await newEquipment.save();
         return res.jsonSuccess(newEquipment, 201)
     } catch (error) {

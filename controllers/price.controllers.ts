@@ -1,17 +1,26 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreatePriceInputs} from "../dto/price.dto";
 import {Price} from "../database/models/Price.model";
+import {CreateBedInputs} from "../dto/bed.dto";
+import {ValidatorRequest} from "../utility/validate-request";
 
 
 export const createPrice = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const body = <CreatePriceInputs>req.body;
-        const existingPrice = await Price.findOne({htAmount: body.htAmount});
+        const body = req.body as CreatePriceInputs;
+        const {errors, input} = await ValidatorRequest(CreatePriceInputs, body);
+
+        if(errors) {
+            return res.jsonError(errors, 400)
+        };
+
+
+        const existingPrice = await Price.findOne({htAmount: input.htAmount});
         if (existingPrice) {
             return res.jsonError('This price already exist', 409)
         }
 
-        const newPrice = new Price({...body})
+        const newPrice = new Price({...input})
         await newPrice.save();
         return res.jsonSuccess(newPrice, 201)
     } catch (error) {

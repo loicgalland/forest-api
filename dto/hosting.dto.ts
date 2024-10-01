@@ -1,3 +1,6 @@
+import {CreatePriceInputs} from "./price.dto";
+import {IsBoolean, IsNotEmpty, IsString, ValidateNested} from "class-validator";
+
 export interface CreateBedInput {
     bedId: string;
     quantity: number;
@@ -8,25 +11,36 @@ export interface CreateEquipmentInput {
     quantity: number;
 }
 
-export interface CreatePriceInput {
-    htAmount: string;
-    startDate: Date;
-    endDate: Date;
-}
 
-export interface CreateHostingInputs {
+export class CreateHostingInputs {
+    @IsString()
+    @IsNotEmpty()
     name: string;
+
+    @IsString()
+    @IsNotEmpty()
     description: string;
-    isSpotLight: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    isSpotlight: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    visible: boolean;
+
     beds: CreateBedInput[];
+
     equipments: CreateEquipmentInput[];
-    prices: CreatePriceInput[];
+
+    prices: CreatePriceInputs[];
 }
 
-export interface UpdateHostingInputs {
+export class UpdateHostingInputs {
     name?: string;
     description?: string;
     isSpotLight?: boolean;
     beds?: CreateBedInput[];
     equipments?: CreateEquipmentInput[];
+    prices?: CreatePriceInputs[];
 }

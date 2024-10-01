@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import 'reflect-metadata';
 import {MONGO_URI} from "./config/db";
 import {errorHandler, jsonResponseMiddleware} from "./middlewares";
 import {ApiRoutes} from "./routes/api.routes";

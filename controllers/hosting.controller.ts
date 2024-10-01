@@ -2,19 +2,27 @@ import {NextFunction, Request, Response} from 'express';
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, Equipment, Hosting} from "../database/models";
 import {Price} from "../database/models/Price.model";
+import {CreatePriceInputs} from "../dto/price.dto";
+import {ValidatorRequest} from "../utility/validate-request";
 
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const body = <CreateHostingInputs>req.body;
-        const existingHosting = await Hosting.findOne({name: body.name});
+        const body = req.body as CreateHostingInputs;
+        const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
+
+        if(errors) {
+            return res.jsonError(errors, 400)
+        };
+
+        const existingHosting = await Hosting.findOne({name: input.name});
         if (existingHosting) {
             return res.jsonError('This hosting already exist', 409)
         }
         const files = req.files as [Express.Multer.File] | undefined;
         const images = files ? files.map(file => file.filename) : [];
 
-        const beds = await Promise.all(body.beds.map(async (bed) => {
+        const beds = await Promise.all(input.beds.map(async (bed) => {
             const { bedId, quantity } = bed;
             const existingBed = await Bed.findById(bedId);
 
@@ -26,9 +34,9 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
                 bed: bedId,
                 quantity
             };
-        }));
+        }))
 
-        const equipments = await Promise.all(body.equipments.map(async (equipment) => {
+        const equipments = await Promise.all(input.equipments.map(async (equipment) => {
             const { equipmentId, quantity } = equipment;
             const existingEquipment = await Equipment.findById(equipmentId);
 
@@ -42,7 +50,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             };
         }));
 
-        const prices = await Promise.all(body.prices.map(async (price) => {
+        const prices = await Promise.all(input.prices.map(async (price) => {
             const { htAmount, startDate, endDate } = price;
 
             if (!htAmount || !startDate || !endDate) {
@@ -60,7 +68,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         }));
 
         const newHosting = new Hosting({
-            ...body,
+            ...input,
             beds,
             equipments,
             prices,

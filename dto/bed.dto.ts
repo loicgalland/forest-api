@@ -1,9 +1,16 @@
-export interface CreateBedInputs {
+import {IsNotEmpty, IsNumber, IsString} from "class-validator";
+
+export class CreateBedInputs {
+    @IsNotEmpty()
+    @IsString()
     name: string;
+
+    @IsNotEmpty()
+    @IsNumber()
     place: number;
 }
 
-export interface UpdateBedInputs {
+export class UpdateBedInputs {
     name?: string;
     place?: number;
 }
