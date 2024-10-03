@@ -5,14 +5,6 @@ export interface BedArray {
     quantity: number;
 }
 
-interface EquipmentArray {
-    equipment: Types.ObjectId;
-    quantity: number;
-}
-
-interface PriceArray {
-    price: Types.ObjectId;
-}
 
 
 export interface HostingDoc extends Document {
@@ -23,8 +15,8 @@ export interface HostingDoc extends Document {
     images: [string],
     capacity: number,
     beds: BedArray[];
-    equipments: EquipmentArray[];
-    prices: PriceArray[]
+    equipments: Types.ObjectId[];
+    price: number
 }
 
 
@@ -52,42 +44,27 @@ const HostingSchema = new Schema<HostingDoc>({
     images:{
         type: [String],
         default: [],
+        required: false,
     },
     beds: [
         {
             bed: {
                 type: Schema.Types.ObjectId,
                 ref: "Bed",
-                required: true,
+                required: false,
             },
             quantity: {
                 type: Number,
-                required: true,
+                required: false,
             }
         }
     ],
-    equipments: [
-        {
-            equipment: {
-                type: Schema.Types.ObjectId,
-                ref: "Equipment",
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            }
-        }
-    ],
-    prices: [
-        {
-            price: {
-                type: Schema.Types.ObjectId,
-                ref: "Price",
-                required: true,
-            }
-        }
-    ]
+    equipments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' }],
+    price: {
+        type: Number,
+        required: true,
+    }
+
 }, {
     timestamps: true,
     toJSON: {

@@ -1,13 +1,13 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, Equipment, Hosting} from "../database/models";
-import {Price} from "../database/models/Price.model";
 import {ValidatorRequest} from "../utility/validate-request";
 import {calculateCapacity} from "../services/hosting.service";
 
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log(req.body)
         const body = req.body as CreateHostingInputs;
         const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
 
@@ -21,37 +21,6 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         }
         const files = req.files as [Express.Multer.File] | undefined;
         const images = files ? files.map(file => file.filename) : [];
-
-        const equipments = await Promise.all(input.equipments.map(async (equipment) => {
-            const { equipmentId, quantity } = equipment;
-            const existingEquipment = await Equipment.findById(equipmentId);
-
-            if (!existingEquipment) {
-                return res.status(404).json({ error: `Equipment with ID ${equipmentId} not found` });
-            }
-
-            return {
-                equipment: equipmentId,
-                quantity
-            };
-        }));
-
-        const prices = await Promise.all(input.prices.map(async (price) => {
-            const { htAmount, startDate, endDate } = price;
-
-            if (!htAmount || !startDate || !endDate) {
-                throw new Error("Price validation failed: htAmount, startDate, and endDate are required.");
-            }
-
-            const newPrice = new Price({
-                htAmount,
-                startDate,
-                endDate
-            });
-
-            await newPrice.save();
-            return { price: newPrice };
-        }));
 
         const beds = await Promise.all(input.beds.map(async (bed) => {
             const { bedId, quantity } = bed;
@@ -69,11 +38,11 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
 
         const totalCapacity = await calculateCapacity(beds)
 
+
+
         const newHosting = new Hosting({
             ...input,
             beds,
-            equipments,
-            prices,
             images,
             capacity: totalCapacity,
         });
@@ -97,20 +66,7 @@ export const getAllHosting = async (req: Request, res: Response, next: NextFunct
                     model: 'Bed'
                 }
             })
-            .populate({
-                path: 'equipments',
-                populate: {
-                    path: 'equipment',
-                    model: 'Equipment'
-                    }
-            })
-            .populate({
-                path: 'prices',
-                populate: {
-                    path: 'price',
-                    model: 'Price'
-                }
-            })
+            .populate( 'equipments')
             .lean();
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
@@ -124,8 +80,6 @@ export const getAllHosting = async (req: Request, res: Response, next: NextFunct
 export const getOneHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {id} = req.params;
-        const {name, description, isSpotlight, beds, equipments} = req.body;
-
         const hosting = await Hosting.findById(id)
             .populate({
                 path: 'beds',
@@ -134,20 +88,7 @@ export const getOneHosting = async (req: Request, res: Response, next: NextFunct
                     model: 'Bed'
                 }
             })
-            .populate({
-                path: 'equipments',
-                populate: {
-                    path: 'equipment',
-                    model: 'Equipment'
-                }
-            })
-            .populate({
-                path: 'prices',
-                populate: {
-                    path: 'price',
-                    model: 'Price'
-                }
-            })
+            .populate('equipments')
             .lean();
 
         if (hosting) return res.jsonSuccess(hosting, 200)
@@ -199,20 +140,7 @@ export const getSpotlightHosting = async (req: Request, res: Response, next: Nex
                 model: 'Bed'
             }
         })
-            .populate({
-                path: 'equipments',
-                populate: {
-                    path: 'equipment',
-                    model: 'Equipment'
-                }
-            })
-            .populate({
-                path: 'prices',
-                populate: {
-                    path: 'price',
-                    model: 'Price'
-                }
-            })
+            .populate('equipments')
             .lean();
 
 

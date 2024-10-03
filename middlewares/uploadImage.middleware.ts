@@ -12,4 +12,3 @@ const uploadImages = multer.diskStorage({
 
 
 export const uploadImagesMiddleware = multer({storage: uploadImages}).array('images', 10);
-

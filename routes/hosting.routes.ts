@@ -16,8 +16,8 @@ router.get("/", getAllHosting);
 router.get("/spotlight", getSpotlightHosting);
 router.get("/:id", getOneHosting);
 router.use(isAdminAuthenticated);
-router.post("/", createHosting, uploadImagesMiddleware);
-router.patch('/:id', updateHosting);
+router.post("/", uploadImagesMiddleware, createHosting);
+router.patch('/:id', uploadImagesMiddleware, updateHosting);
 router.delete("/:id", deleteHosting);
 
 
