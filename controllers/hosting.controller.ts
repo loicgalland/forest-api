@@ -3,22 +3,33 @@ import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, Equipment, Hosting} from "../database/models";
 import {ValidatorRequest} from "../utility/validate-request";
 import {calculateCapacity} from "../services/hosting.service";
+import mongoose from "mongoose";
 
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body)
-        const body = req.body as CreateHostingInputs;
+        const body = req.body;
+
+        body.price = parseFloat(body.price);
+        body.visible = body.visible === 'true';
+        body.isSpotlight = body.isSpotlight === 'true';
+        body.beds = JSON.parse(body.beds);
+
+        body.equipments = JSON.parse(body.equipments).map((equipmentId: string) =>
+            new mongoose.Types.ObjectId(equipmentId)
+        );
+
         const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
 
-        if(errors) {
-            return res.jsonError(errors, 400)
-        };
-
-        const existingHosting = await Hosting.findOne({name: input.name});
-        if (existingHosting) {
-            return res.jsonError('This hosting already exist', 409)
+        if (errors) {
+            return res.jsonError(errors, 400);
         }
+
+        const existingHosting = await Hosting.findOne({ name: input.name });
+        if (existingHosting) {
+            return res.jsonError('This hosting already exists', 409);
+        }
+
         const files = req.files as [Express.Multer.File] | undefined;
         const images = files ? files.map(file => file.filename) : [];
 
@@ -32,13 +43,11 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
 
             return {
                 bed: bedId,
-                quantity
+                quantity,
             };
-        }))
+        }));
 
-        const totalCapacity = await calculateCapacity(beds)
-
-
+        const totalCapacity = await calculateCapacity(beds);
 
         const newHosting = new Hosting({
             ...input,
@@ -47,12 +56,10 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             capacity: totalCapacity,
         });
 
-
-
         await newHosting.save();
-        return res.jsonSuccess(newHosting, 201)
+        return res.jsonSuccess(newHosting, 201);
     } catch (error) {
-        next(error)
+        next(error);
     }
 }
 
