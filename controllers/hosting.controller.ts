@@ -1,9 +1,10 @@
-import {NextFunction, Request, Response} from 'express';
+
 import {CreateHostingInputs} from "../dto/hosting.dto";
-import {Bed, BedArray, Equipment, Hosting} from "../database/models";
+import {Bed, BedArray, Hosting} from "../database/models";
 import {ValidatorRequest} from "../utility/validate-request";
 import {calculateCapacity} from "../services/hosting.service";
 import mongoose from "mongoose";
+import {Request, Response, NextFunction} from "express";
 
 
 interface Bed {
@@ -113,7 +114,7 @@ export const getOneHosting = async (req: Request, res: Response, next: NextFunct
 
 export const updateHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
-    const {name, description, visible, isSpotlight, price, beds, equipments} = req.body;
+    const {name, description, visible, isSpotlight, price, equipments} = req.body;
 
     try {
         const hosting = await Hosting.findById(id);
@@ -135,15 +136,19 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
 
             if (bedId && quantity) {
                 const existingBedIndex = hosting.beds.findIndex(b => b.bed.equals(new mongoose.Types.ObjectId(bedId)));
-
-                if (existingBedIndex !== -1) {
-                    hosting.beds[existingBedIndex].quantity = parseInt(quantity, 10);
-                } else {
-                    beds.push({
-                        bed: new mongoose.Types.ObjectId(bedId),
-                        quantity: parseInt(quantity, 10)
-                    });
-                }
+               if(Number(quantity) === 0){
+                   hosting.beds.splice(existingBedIndex, 1);
+               }
+               else{
+                   if (existingBedIndex !== -1) {
+                       hosting.beds[existingBedIndex].quantity = parseInt(quantity, 10);
+                   } else {
+                       beds.push({
+                           bed: new mongoose.Types.ObjectId(bedId),
+                           quantity: parseInt(quantity, 10)
+                       });
+                   }
+               }
             }
 
         })
@@ -155,7 +160,6 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
 
         if(equipments && equipments.length) hosting.equipments = equipments
 
-        console.log(hosting.beds)
         if(hosting.beds && hosting.beds.length) hosting.capacity = await calculateCapacity(hosting.beds);
 
 
