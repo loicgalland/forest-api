@@ -1,10 +1,15 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreateHostingInputs} from "../dto/hosting.dto";
-import {Bed, Equipment, Hosting} from "../database/models";
+import {Bed, BedArray, Equipment, Hosting} from "../database/models";
 import {ValidatorRequest} from "../utility/validate-request";
 import {calculateCapacity} from "../services/hosting.service";
 import mongoose from "mongoose";
 
+
+interface Bed {
+    bedId: mongoose.Types.ObjectId;
+    quantity: number;
+}
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -108,7 +113,8 @@ export const getOneHosting = async (req: Request, res: Response, next: NextFunct
 
 export const updateHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
-    const {name, description, isSpotlight, beds, equipments} = req.body;
+    const {name, description, visible, isSpotlight, price, beds, equipments} = req.body;
+
     try {
         const hosting = await Hosting.findById(id);
         if (!hosting) {
@@ -116,9 +122,42 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
         }
         if (name !== undefined) hosting.name = name;
         if (description !== undefined) hosting.description = description;
+        if (visible !== undefined) hosting.visible = visible;
         if (isSpotlight !== undefined) hosting.isSpotlight = isSpotlight;
-        if(beds && beds.length) hosting.beds = beds
+        if(price !== undefined) hosting.price = price;
+
+
+        const beds: BedArray[] = [];
+
+        req.body.beds.forEach((bed) => {
+            const bedId = bed.bedId;
+            const quantity = bed.quantity;
+
+            if (bedId && quantity) {
+                const existingBedIndex = hosting.beds.findIndex(b => b.bed.equals(new mongoose.Types.ObjectId(bedId)));
+
+                if (existingBedIndex !== -1) {
+                    hosting.beds[existingBedIndex].quantity = parseInt(quantity, 10);
+                } else {
+                    beds.push({
+                        bed: new mongoose.Types.ObjectId(bedId),
+                        quantity: parseInt(quantity, 10)
+                    });
+                }
+            }
+
+        })
+
+        if (beds.length) {
+            hosting.beds.push(...beds);
+        }
+
+
         if(equipments && equipments.length) hosting.equipments = equipments
+
+        console.log(hosting.beds)
+        if(hosting.beds && hosting.beds.length) hosting.capacity = await calculateCapacity(hosting.beds);
+
 
         const hostingSaved = await hosting.save();
         return res.jsonSuccess(hostingSaved, 200)
@@ -140,6 +179,7 @@ export const deleteHosting = async (req: Request, res: Response, next: NextFunct
 
 export const getSpotlightHosting = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
         const hostings = await Hosting.find({ visible: true, isSpotlight: true}).populate({
             path: 'beds',
             populate: {
