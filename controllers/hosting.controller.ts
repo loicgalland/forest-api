@@ -173,8 +173,8 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
 export const deleteHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
     try {
-        await Hosting.findById(id);
-        return res.jsonSuccess('Hosting delete', 404)
+        await Hosting.findByIdAndDelete(id);
+        return res.jsonSuccess('Hosting delete', 200)
 
     } catch (error) {
         next(error)
