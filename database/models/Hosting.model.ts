@@ -12,7 +12,7 @@ export interface HostingDoc extends Document {
     description: string,
     isSpotlight: boolean,
     visible: boolean,
-    images: [string],
+    images: Types.ObjectId[],
     capacity: number,
     beds: BedArray[];
     equipments: Types.ObjectId[];
@@ -41,11 +41,13 @@ const HostingSchema = new Schema<HostingDoc>({
         type: Number,
         required: false,
     },
-    images:{
-        type: [String],
-        default: [],
-        required: false,
-    },
+    images: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "File",
+            required: false,
+        }
+    ],
     beds: [
         {
             bed: {

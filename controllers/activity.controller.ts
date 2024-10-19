@@ -1,12 +1,17 @@
 import {Request, Response, NextFunction} from "express";
 import {Activity} from "../database/models/Activities.model";
+import {File} from "../database/models/File.model";
 import {ValidatorRequest} from "../utility/validate-request";
 import {CreateHostingInputs} from "../dto/hosting.dto";
+import mongoose from "mongoose";
 
 
 export const getAllActivities = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const activities = await Activity.find({visible: true})
+            .populate({
+                path: 'images'
+            })
 
         if(activities.length) return res.jsonSuccess(activities, 200)
         return res.jsonError('No activities found', 404)
@@ -18,6 +23,9 @@ export const getAllActivities = async(req: Request, res: Response, next: NextFun
 export const getAllSpotlightActivities = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const activities = await Activity.find({visible: true, isSpotlight: true})
+            .populate({
+                path: 'images'
+            })
         if(activities.length) return res.jsonSuccess(activities, 200)
         return res.jsonError('No activities found', 404)
     } catch (error){
@@ -29,6 +37,9 @@ export const getOneActivity = async (req: Request, res: Response, next: NextFunc
     try {
         const {id} = req.params;
         const activity = await Activity.findById(id)
+            .populate({
+                path: 'images'
+            })
 
         if(activity) return res.jsonSuccess(activity, 200)
         return res.jsonError('No activity found', 404)
@@ -44,6 +55,20 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
         body.visible = body.visible === 'true';
         body.isSpotlight = body.isSpotlight === 'true';
 
+        let imageIds: mongoose.Types.ObjectId[] = []
+
+        if (req.files && Array.isArray(req.files)) {
+            for (const file of req.files) {
+                const newFile = new File({
+                    originalName: file.originalname,
+                    path: file.path,
+                });
+
+                const savedFile = await newFile.save();
+                imageIds.push(savedFile._id as mongoose.Types.ObjectId);
+            }
+        }
+
         const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
 
         if (errors) {
@@ -55,7 +80,7 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
 
         const newActivity = await Activity.create({
             ...input,
-            images
+            images: imageIds,
         });
         await newActivity.save();
         return res.jsonSuccess(newActivity, 201)
@@ -78,6 +103,22 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
         if (visible !== undefined) activity.visible = visible;
         if (isSpotlight !== undefined) activity.isSpotlight = isSpotlight;
         if(price !== undefined) activity.price = price;
+
+        let imageIds: mongoose.Types.ObjectId[] = [];
+
+        if (req.files && Array.isArray(req.files)) {
+            for (const file of req.files) {
+                const newFile = new File({
+                    originalName: file.originalname,
+                    path: file.path,
+                });
+
+                const savedFile = await newFile.save();
+                imageIds.push(savedFile._id as mongoose.Types.ObjectId);
+            }
+        }
+
+        activity.images = [...activity.images, ...imageIds];
 
         const activitySaved = await activity.save();
         return res.jsonSuccess(activitySaved, 200)

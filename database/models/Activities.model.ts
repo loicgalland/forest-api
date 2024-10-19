@@ -1,4 +1,4 @@
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, Schema, Types} from "mongoose";
 
 
 export interface ActivityDoc extends Document {
@@ -6,7 +6,7 @@ export interface ActivityDoc extends Document {
     description: string,
     isSpotlight: boolean,
     visible: boolean,
-    images: [string],
+    images: Types.ObjectId[],
     capacity: number,
     price: number
 }
@@ -33,11 +33,13 @@ const ActivitySchema = new Schema<ActivityDoc>({
         type: Number,
         required: false,
     },
-    images:{
-        type: [String],
-        default: [],
-        required: false,
-    },
+    images: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "File",
+            required: false,
+        }
+    ],
     price: {
         type: Number,
         required: true,

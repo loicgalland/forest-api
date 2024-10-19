@@ -5,6 +5,7 @@ import {ValidatorRequest} from "../utility/validate-request";
 import {calculateCapacity} from "../services/hosting.service";
 import mongoose from "mongoose";
 import {Request, Response, NextFunction} from "express";
+import {File} from "../database/models/File.model";
 
 
 interface Bed {
@@ -36,8 +37,19 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
             return res.jsonError('This hosting already exists', 409);
         }
 
-        const files = req.files as [Express.Multer.File] | undefined;
-        const images = files ? files.map(file => file.filename) : [];
+        let imageIds: mongoose.Types.ObjectId[] = []
+
+        if (req.files && Array.isArray(req.files)) {
+            for (const file of req.files) {
+                const newFile = new File({
+                    originalName: file.originalname,
+                    path: file.path,
+                });
+
+                const savedFile = await newFile.save();
+                imageIds.push(savedFile._id as mongoose.Types.ObjectId);
+            }
+        }
 
         const beds = await Promise.all(input.beds.map(async (bed) => {
             const { bedId, quantity } = bed;
@@ -58,7 +70,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         const newHosting = new Hosting({
             ...input,
             beds,
-            images,
+            images: imageIds,
             capacity: totalCapacity,
         });
 
@@ -80,6 +92,9 @@ export const getAllHosting = async (req: Request, res: Response, next: NextFunct
                 }
             })
             .populate( 'equipments')
+            .populate({
+                path: 'images'
+            })
             .lean();
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
@@ -102,7 +117,11 @@ export const getOneHosting = async (req: Request, res: Response, next: NextFunct
                 }
             })
             .populate('equipments')
-            .lean();
+
+            .lean()
+            .populate({
+                path: 'images'
+            });
 
         if (hosting) return res.jsonSuccess(hosting, 200)
         return res.jsonError('No hosting found', 404)
@@ -192,6 +211,9 @@ export const getSpotlightHosting = async (req: Request, res: Response, next: Nex
             }
         })
             .populate('equipments')
+            .populate({
+                path: 'images'
+            })
             .lean();
 
 
