@@ -131,6 +131,14 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
 export const deleteActivity = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
     try {
+        const activity = await Activity.findById(id);
+
+        if(!activity) return res.jsonError('Activity not found', 404)
+
+        if(activity.images && activity.images.length > 0){
+            await File.deleteMany({ _id: { $in: activity.images } });
+        }
+
         await Activity.findByIdAndDelete(id);
         return res.jsonSuccess('Activity deleted', 200)
 

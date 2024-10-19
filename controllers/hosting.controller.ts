@@ -192,6 +192,16 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
 export const deleteHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
     try {
+        const hosting = await Hosting.findById(id);
+
+        if (!hosting) {
+            return res.jsonError('Hosting not found', 404);
+        }
+
+        if (hosting.images && hosting.images.length > 0) {
+            await File.deleteMany({ _id: { $in: hosting.images } });
+        }
+
         await Hosting.findByIdAndDelete(id);
         return res.jsonSuccess('Hosting delete', 200)
 
