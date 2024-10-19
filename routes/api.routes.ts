@@ -4,6 +4,7 @@ import {EquipmentRoutes} from "./equipment.routes";
 import {HostingRoutes} from "./hosting.routes";
 import {AuthRoutes} from "./auth.routes";
 import {ActivityRoutes} from "./activity.routes";
+import {EventRoutes} from "./event.routes";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/bed', BedRoutes);
 router.use('/equipment', EquipmentRoutes);
 router.use('/hosting', HostingRoutes)
 router.use('/activity', ActivityRoutes)
+router.use('/event', EventRoutes)
 
 export { router as ApiRoutes }

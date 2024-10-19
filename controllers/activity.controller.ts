@@ -4,6 +4,7 @@ import {File} from "../database/models/File.model";
 import {ValidatorRequest} from "../utility/validate-request";
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import mongoose from "mongoose";
+import {CreateActivityInputs} from "../dto/activity.dto";
 
 
 export const getAllActivities = async(req: Request, res: Response, next: NextFunction) => {
@@ -69,7 +70,7 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
             }
         }
 
-        const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
+        const {errors, input} = await ValidatorRequest(CreateActivityInputs, body);
 
         if (errors) {
             return res.jsonError(errors, 400);
