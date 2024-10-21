@@ -106,7 +106,7 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
 
 export const updateActivity = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
-    const {name, description, visible, isSpotlight, price} = req.body;
+    const {name, description, visible, isSpotlight, price, imageToDelete, image} = req.body;
     try{
         const activity = await Activity.findById(id);
 
@@ -133,6 +133,10 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
         }
 
         activity.images = [...activity.images, ...imageIds];
+
+        if (imageToDelete) {
+            activity.images = activity.images.filter(imageId => !imageToDelete.includes(imageId.toString()));
+        }
 
         const activitySaved = await activity.save();
         return res.jsonSuccess(activitySaved, 200)
