@@ -8,6 +8,20 @@ import {CreateEventInputs} from "../dto/event.dto";
 
 export const getAllEvents = async(req: Request, res: Response, next: NextFunction) => {
     try {
+        const events = await Event.find()
+            .populate({
+                path: 'images'
+            })
+
+        if(events.length) return res.jsonSuccess(events, 200)
+        return res.jsonError('No events found', 404)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAllVisibleEvents = async(req: Request, res: Response, next: NextFunction) => {
+    try {
         const events = await Event.find({visible: true})
             .populate({
                 path: 'images'
@@ -41,6 +55,8 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
         const body = req.body;
         body.price = parseFloat(body.price);
         body.visible = body.visible === 'true';
+        body.date = new Date(req.body.date);
+
 
         let imageIds: mongoose.Types.ObjectId[] = []
 
@@ -79,7 +95,7 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 export const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
-    const {name, description, visible, price} = req.body;
+    const {name, description, visible, price, date} = req.body;
     try{
         const event = await Event.findById(id);
 
@@ -89,6 +105,7 @@ export const updateEvent = async (req: Request, res: Response, next: NextFunctio
         if (description !== undefined) event.description = description;
         if (visible !== undefined) event.visible = visible;
         if(price !== undefined) event.price = price;
+        if(date !== undefined) event.date = date;
 
         let imageIds: mongoose.Types.ObjectId[] = [];
 

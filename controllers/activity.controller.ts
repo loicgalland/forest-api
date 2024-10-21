@@ -7,9 +7,23 @@ import mongoose from "mongoose";
 import {CreateActivityInputs} from "../dto/activity.dto";
 
 
-export const getAllActivities = async(req: Request, res: Response, next: NextFunction) => {
+export const getAllVisibleActivities = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const activities = await Activity.find({visible: true})
+            .populate({
+                path: 'images'
+            })
+
+        if(activities.length) return res.jsonSuccess(activities, 200)
+        return res.jsonError('No activities found', 404)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAllActivities = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const activities = await Activity.find()
             .populate({
                 path: 'images'
             })

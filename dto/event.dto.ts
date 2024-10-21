@@ -1,4 +1,4 @@
-import {IsBoolean, IsNotEmpty, IsNumber, IsString} from "class-validator";
+import {IsBoolean, IsDate, IsNotEmpty, IsNumber, IsString} from "class-validator";
 
 export class CreateEventInputs {
     @IsString()
@@ -16,6 +16,10 @@ export class CreateEventInputs {
     @IsNotEmpty()
     @IsNumber()
     price: number;
+
+    @IsNotEmpty()
+    @IsDate()
+    date: Date;
 }
 
 export class UpdateHostingInputs {
@@ -23,4 +27,5 @@ export class UpdateHostingInputs {
     description?: string;
     prices: number;
     visible: boolean;
+    date: Date;
 }

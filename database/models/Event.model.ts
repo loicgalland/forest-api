@@ -8,6 +8,7 @@ export interface EventDoc extends Document {
     images: Types.ObjectId[],
     capacity: number,
     price: number
+    date: Date,
 }
 
 
@@ -37,6 +38,10 @@ const EventSchema = new Schema<EventDoc>({
     ],
     price: {
         type: Number,
+        required: true,
+    },
+    date: {
+        type: Date,
         required: true,
     }
 
