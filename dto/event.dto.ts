@@ -20,12 +20,17 @@ export class CreateEventInputs {
     @IsNotEmpty()
     @IsDate()
     date: Date;
+
+    @IsNotEmpty()
+    @IsNumber()
+    capacity: number;
 }
 
-export class UpdateHostingInputs {
+export class UpdateEventInputs {
     name?: string;
     description?: string;
     prices: number;
     visible: boolean;
     date: Date;
+    capacity: number;
 }

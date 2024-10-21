@@ -156,7 +156,7 @@ export const getOneHosting = async (req: Request, res: Response, next: NextFunct
 
 export const updateHosting = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
-    const {name, description, visible, isSpotlight, price, equipments} = req.body;
+    const {name, description, visible, isSpotlight, price, equipments, imageToDelete,} = req.body;
 
     try {
         const hosting = await Hosting.findById(id);
@@ -195,10 +195,29 @@ export const updateHosting = async (req: Request, res: Response, next: NextFunct
 
         })
 
+        let imageIds: mongoose.Types.ObjectId[] = [];
+
+        if (req.files && Array.isArray(req.files)) {
+            for (const file of req.files) {
+                const newFile = new File({
+                    originalName: file.originalname,
+                    path: file.path,
+                });
+
+                const savedFile = await newFile.save();
+                imageIds.push(savedFile._id as mongoose.Types.ObjectId);
+            }
+        }
+
+        hosting.images = [...hosting.images, ...imageIds];
+
+        if (imageToDelete) {
+            hosting.images = hosting.images.filter(imageId => !imageToDelete.includes(imageId.toString()));
+        }
+
         if (beds.length) {
             hosting.beds.push(...beds);
         }
-
 
         if(equipments && equipments.length) hosting.equipments = equipments
 

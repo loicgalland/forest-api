@@ -58,7 +58,6 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
         body.visible = body.visible === 'true';
         body.date = new Date(req.body.date);
 
-
         let imageIds: mongoose.Types.ObjectId[] = []
 
         if (req.files && Array.isArray(req.files)) {
@@ -96,18 +95,28 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 }
 
 export const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
-    const {name, description, visible, price, date} = req.body;
-    try{
+    const { id } = req.params;
+    const { name, description, visible, price, date, imageToDelete, capacity } = req.body;
+    try {
         const event = await Event.findById(id);
 
-        if (!event) return res.jsonError('Event not found', 404)
+        if (!event) return res.jsonError('Event not found', 404);
 
         if (name !== undefined) event.name = name;
         if (description !== undefined) event.description = description;
         if (visible !== undefined) event.visible = visible;
-        if(price !== undefined) event.price = price;
-        if(date !== undefined) event.date = date;
+        if (price !== undefined) event.price = price;
+        if (date !== undefined) event.date = date;
+        if(event.capacity - event.placeAvailable < capacity){
+            if(capacity !== undefined) {
+                event.capacity = capacity;
+            }
+            if(event.capacity === event.placeAvailable){
+                event.placeAvailable = capacity
+            }
+        } else {
+            return res.jsonError('There are already too much booking for this event', 500);
+        }
 
         let imageIds: mongoose.Types.ObjectId[] = [];
 
@@ -125,13 +134,17 @@ export const updateEvent = async (req: Request, res: Response, next: NextFunctio
 
         event.images = [...event.images, ...imageIds];
 
-        const eventSaved = await event.save();
-        return res.jsonSuccess(eventSaved, 200)
+        if (imageToDelete) {
+            event.images = event.images.filter(imageId => !imageToDelete.includes(imageId.toString()));
+        }
 
-    } catch (error){
-        next(error)
+        const eventSaved = await event.save();
+        return res.jsonSuccess(eventSaved, 200);
+
+    } catch (error) {
+        next(error);
     }
-}
+};
 
 export const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
