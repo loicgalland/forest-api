@@ -54,6 +54,7 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
     try{
         const body = req.body;
         body.price = parseFloat(body.price);
+        body.capacity = parseFloat(body.capacity);
         body.visible = body.visible === 'true';
         body.date = new Date(req.body.date);
 
@@ -83,6 +84,7 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
         const newEvent = await Event.create({
             ...input,
+            placeAvailable: body.capacity,
             images: imageIds,
         });
         await newEvent.save();

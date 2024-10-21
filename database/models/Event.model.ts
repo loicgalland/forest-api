@@ -9,6 +9,7 @@ export interface EventDoc extends Document {
     capacity: number,
     price: number
     date: Date,
+    placeAvailable: number,
 }
 
 
@@ -42,6 +43,10 @@ const EventSchema = new Schema<EventDoc>({
     },
     date: {
         type: Date,
+        required: true,
+    },
+    placeAvailable: {
+        type: Number,
         required: true,
     }
 
