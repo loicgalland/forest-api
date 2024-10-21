@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {Equipment} from "../database/models";
 import {CreateEquipmentInputs} from "../dto/equipment.dto";
-import {CreateBedInputs} from "../dto/bed.dto";
 import {ValidatorRequest} from "../utility/validate-request";
 
 

@@ -1,4 +1,3 @@
-
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, BedArray, Hosting} from "../database/models";
 import {ValidatorRequest} from "../utility/validate-request";
