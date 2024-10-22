@@ -10,8 +10,8 @@ import {uploadImagesMiddleware} from "../middlewares/uploadImage.middleware";
 
 const router = express.Router();
 router.get("/", getAllActivities);
-router.get("/visible", getAllVisibleActivities);
 router.get("/spotlight", getAllSpotlightActivities);
+router.get("/visible", getAllVisibleActivities);
 router.get("/:id", getOneActivity);
 router.use(isAdminAuthenticated);
 router.post('/', uploadImagesMiddleware, createActivity)
