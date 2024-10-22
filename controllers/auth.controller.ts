@@ -35,12 +35,20 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         if(existingUser){
             const isValidPassword = await isValidatedPassword(req.body.password, existingUser.password ,existingUser.salt)
             if(isValidPassword){
-                const signature = generateSignature({
+                const token = generateSignature({
                     _id: existingUser._id as string,
                     email: existingUser.email,
                     role: existingUser.role,
                 })
-                res.jsonSuccess(signature, 200)
+
+                res.cookie('jwt', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'none',
+                });
+
+
+                res.jsonSuccess({message: "Login successful"}, 200)
             }
         }
         return res.jsonError('Wrong credentials', 403)
