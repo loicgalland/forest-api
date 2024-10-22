@@ -2,6 +2,10 @@ import {Request, Response, NextFunction} from "express";
 import {CreateUserInputs, LoginUserInputs} from "../dto/user.dto";
 import {User} from "../database/models/User.model";
 import {generateSalt, generateSignature, hashPassword, isValidatedPassword} from "../utility";
+import jwt from "jsonwebtoken";
+import {SECRET_KEY} from "../config";
+import {AdminPayload} from "../dto/Admin.dto";
+import {AuthPayload} from "../dto/Auth.dto";
 
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -54,6 +58,20 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         return res.jsonError('Wrong credentials', 403)
 
     }catch (error) {
+        next(error)
+    }
+}
+
+export const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY) as AuthPayload;
+        res.json({ role: decoded.role });
+    } catch (error) {
         next(error)
     }
 }
