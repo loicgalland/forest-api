@@ -1,19 +1,20 @@
 import {NextFunction, Request, Response} from "express";
-import {isValidSignature} from "../utility";
-import {TokenExpiredError} from "jsonwebtoken";
+import {SECRET_KEY} from "../config";
+import jwt, {TokenExpiredError} from "jsonwebtoken";
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const isValid = isValidSignature(req)
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
 
-        if (isValid) {
-            return next()
+        req.user = jwt.verify(token, SECRET_KEY);
+        next();
+    } catch (error) {
+        if (error instanceof TokenExpiredError) {
+            return res.jsonError("Token expired", 401);
         }
-        res.jsonError('User not authorized', 403)
-    } catch(error) {
-        if(error instanceof TokenExpiredError) {
-            return res.jsonError("Token expired", 401)
-        }
-        next(error)
+        next(error);
     }
 }
