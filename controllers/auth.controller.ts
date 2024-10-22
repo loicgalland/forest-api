@@ -4,7 +4,6 @@ import {User} from "../database/models/User.model";
 import {generateSalt, generateSignature, hashPassword, isValidatedPassword} from "../utility";
 import jwt from "jsonwebtoken";
 import {SECRET_KEY} from "../config";
-import {AdminPayload} from "../dto/Admin.dto";
 import {AuthPayload} from "../dto/Auth.dto";
 
 
@@ -33,34 +32,36 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {email, password} = <LoginUserInputs>req.body
-        const existingUser = await User.findOne({email}).exec()
+        const { email, password } = <LoginUserInputs>req.body;
+        const existingUser = await User.findOne({ email }).exec();
 
-        if(existingUser){
-            const isValidPassword = await isValidatedPassword(req.body.password, existingUser.password ,existingUser.salt)
-            if(isValidPassword){
-                const token = generateSignature({
-                    _id: existingUser._id as string,
-                    email: existingUser.email,
-                    role: existingUser.role,
-                })
-
-                res.cookie('jwt', token, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'none',
-                });
-
-
-                res.jsonSuccess({message: "Login successful"}, 200)
-            }
+        if (!existingUser) {
+            return res.jsonError('Wrong credentials', 403);
         }
-        return res.jsonError('Wrong credentials', 403)
 
-    }catch (error) {
-        next(error)
+        const isValidPassword = await isValidatedPassword(password, existingUser.password, existingUser.salt);
+
+        if (!isValidPassword) {
+            return res.jsonError('Wrong credentials', 403);
+        }
+
+        const token = generateSignature({
+            _id: existingUser._id as string,
+            email: existingUser.email,
+            role: existingUser.role,
+        });
+
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+
+        return res.jsonSuccess({ message: "Login successful" }, 200);
+    } catch (error) {
+        next(error);
     }
-}
+};
 
 export const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.jwt;
