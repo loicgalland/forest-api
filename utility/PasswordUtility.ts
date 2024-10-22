@@ -17,7 +17,7 @@ export const isValidatedPassword = async (enteredPassword: string, savedPassword
 }
 
 export const generateSignature = (payload: AuthPayload) => {
-    return jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' })
+    return jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' })
 }
 
 export const isValidSignature = (req: Request) => {

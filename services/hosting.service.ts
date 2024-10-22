@@ -1,4 +1,4 @@
-import {Bed, BedArray} from "../database/models";
+import {Bed} from "../database/models";
 
 export async function calculateCapacity(beds: any): Promise<number> {
     let totalCapacity = 0;
