@@ -4,7 +4,7 @@ import jwt, {TokenExpiredError} from "jsonwebtoken";
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.cookies.jwt;
+        const token = req.cookies.token;
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }

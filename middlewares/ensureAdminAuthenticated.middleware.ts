@@ -5,7 +5,7 @@ import {SECRET_KEY} from "../config";
 
 export const isAdminAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.cookies.jwt;
+        const token = req.cookies.token;
 
         if (!token) {
             return res.jsonError('User not authorized', 403);
