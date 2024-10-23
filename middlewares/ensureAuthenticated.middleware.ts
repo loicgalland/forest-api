@@ -13,8 +13,8 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
         next();
     } catch (error) {
         if (error instanceof TokenExpiredError) {
-            return res.jsonError("Token expired", 401);
+            return res.status(401).json({ message: 'Unauthorized: Token expired' });
         }
-        next(error);
+        return res.status(403).json({ message: 'Forbidden: Invalid token' });
     }
 }
