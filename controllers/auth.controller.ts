@@ -82,11 +82,11 @@ export const getUserRole = async (req: Request, res: Response, next: NextFunctio
     const token = req.cookies.token;
 
     if (!token) {
-        res.json({ role: null});
+        res.json({ role: null, userId: null});
     }
     try {
         const decoded = jwt.verify(token, SECRET_KEY) as AuthPayload;
-        res.json({ role: decoded.role });
+        res.json({ role: decoded.role, userId: decoded._id });
     } catch (error) {
         next(error)
     }

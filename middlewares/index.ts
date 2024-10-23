@@ -1,3 +1,6 @@
 export * from './errorHandler.middleware'
 export * from './jsonResponse.middleware'
 export * from './ensureAuthenticated.middleware'
+export * from './ensureAdminAuthenticated.middleware'
+export * from './uploadImage.middleware'
+export * from './uploadOneImage.middleware'
