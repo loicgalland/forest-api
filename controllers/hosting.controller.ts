@@ -16,6 +16,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
     try {
         const body = req.body;
 
+        console.log(body);
         body.price = parseFloat(body.price);
         body.visible = body.visible === 'true';
         body.isSpotlight = body.isSpotlight === 'true';
@@ -35,6 +36,7 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
         if (existingHosting) {
             return res.jsonError('This hosting already exists', 409);
         }
+
 
         let imageIds: mongoose.Types.ObjectId[] = []
 

@@ -1,23 +1,24 @@
-import { createActivity } from './activity.controller';
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { ValidatorRequest } from '../utility';
-import {Activity} from "../database/models";
+import {Event} from "../database/models";
+import {createEvent} from "./event.controller";
 
 jest.mock('../utility/validate-request');
-jest.mock('../database/models/Activities.model');
+jest.mock('../database/models/Event.model');
 
-describe('ActivityController', () => {
-    describe('Scenario: Happy path', () => {
-        const req = {
-            body: {
-                name: 'Cours de cuisine',
-                description: 'Cours de cuisine',
-                isSpotlight: true,
+describe('EventController', () => {
+    describe('Scenario Happy path', () => {
+        const req= {
+            body:{
+                name: 'Concert',
+                description: 'Concert de rock',
                 visible: true,
                 images: ['6713858aa259568886ba7696'],
-                capacity: 5,
-                price: 15,
+                capacity: 40,
+                price: 25,
+                date: "2024-10-31T23:00:00.000+00:00",
+                placeAvailable: 40,
             }
         } as Partial<Request>;
 
@@ -32,20 +33,19 @@ describe('ActivityController', () => {
             jest.clearAllMocks();
         });
 
-        it('should return code 201', async () => {
+        it("Should return code 201", async() => {
             (ValidatorRequest as jest.Mock).mockResolvedValue({
                 errors: null,
                 input: req.body,
             });
-
-            const mockActivity = {
+            const mockEvent = {
                 save: jest.fn().mockResolvedValue({ _id: new mongoose.Types.ObjectId(), ...req.body }),
             };
-            (Activity.create as jest.Mock).mockResolvedValue(mockActivity);
+            (Event.create as jest.Mock).mockResolvedValue(mockEvent)
 
-            await createActivity(req as Request, res as Response, next);
+            await createEvent(req as Request, res as Response, next);
 
             expect(res.jsonSuccess).toHaveBeenCalledWith(expect.any(Object), 201);
-        });
-    });
-});
+        })
+    })
+})
