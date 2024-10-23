@@ -51,10 +51,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             role: existingUser.role,
         });
 
-        res.cookie('jwt', token, {
+        res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
+            path: '/',
         });
 
         return res.jsonSuccess({ message: "Login successful" }, 200);
@@ -63,11 +64,25 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 };
 
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+        });
+        return res.jsonSuccess({ message: 'Logout successful' }, 200);
+    }catch (error) {
+        next(error);
+    }
+}
+
 export const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies.token;
 
     if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        res.json({ role: null});
     }
     try {
         const decoded = jwt.verify(token, SECRET_KEY) as AuthPayload;
