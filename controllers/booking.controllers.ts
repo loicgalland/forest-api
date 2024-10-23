@@ -46,7 +46,7 @@ export const getAllHostingBookings = async (req: Request, res: Response, next: N
             return res.jsonError('No hosting found ', 404)
         }
         if(!bookings.length){
-            return res.jsonSuccess({message: "No booking found for this hosting"}, 200)
+            return res.jsonSuccess("No booking found for this hosting", 200)
         }
         return res.jsonSuccess(bookings, 200)
     } catch (error) {

@@ -14,7 +14,7 @@ export const getAllVisibleActivities = async(req: Request, res: Response, next: 
             })
 
         if(activities.length) return res.jsonSuccess(activities, 200)
-        return res.jsonError('No activities found', 404)
+        return res.jsonSuccess('No activities found', 200)
     } catch (error) {
         next(error)
     }
@@ -28,7 +28,7 @@ export const getAllActivities = async(req: Request, res: Response, next: NextFun
             })
 
         if(activities.length) return res.jsonSuccess(activities, 200)
-        return res.jsonError('No activities found', 404)
+        return res.jsonSuccess('No activities found', 200)
     } catch (error) {
         next(error)
     }
@@ -41,7 +41,7 @@ export const getAllSpotlightActivities = async(req: Request, res: Response, next
                 path: 'images'
             })
         if(activities.length) return res.jsonSuccess(activities, 200)
-        return res.jsonError('No activities found', 404)
+        return res.jsonSuccess('No activities found', 200)
     } catch (error){
         next(error)
     }

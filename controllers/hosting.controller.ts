@@ -97,7 +97,7 @@ export const getAllVisibleHosting = async (req: Request, res: Response, next: Ne
             .lean();
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
-        return res.jsonError('No hosting found', 404)
+        return res.jsonSuccess('No hosting found', 200)
 
     } catch (error) {
         next(error)
@@ -121,7 +121,7 @@ export const getAllHosting = async (req: Request, res: Response, next: NextFunct
             .lean();
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
-        return res.jsonError('No hosting found', 404)
+        return res.jsonSuccess('No hosting found', 200)
 
     } catch (error) {
         next(error)
@@ -270,7 +270,7 @@ export const getSpotlightHosting = async (req: Request, res: Response, next: Nex
 
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
-        return res.jsonError('No hosting found', 404)
+        return res.jsonSuccess('No hosting found', 200)
 
     } catch (error) {
         next(error)

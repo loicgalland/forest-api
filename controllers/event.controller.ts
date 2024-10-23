@@ -14,7 +14,7 @@ export const getAllEvents = async(req: Request, res: Response, next: NextFunctio
             })
 
         if(events.length) return res.jsonSuccess(events, 200)
-        return res.jsonError('No events found', 404)
+        return res.jsonSuccess('No events found', 200)
     } catch (error) {
         next(error)
     }
@@ -28,7 +28,7 @@ export const getAllVisibleEvents = async(req: Request, res: Response, next: Next
             })
 
         if(events.length) return res.jsonSuccess(events, 200)
-        return res.jsonError('No events found', 404)
+        return res.jsonSuccess('No events found', 200)
     } catch (error) {
         next(error)
     }
