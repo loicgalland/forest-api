@@ -2,19 +2,16 @@ import express from "express";
 import {
     createHosting,
     deleteHosting,
-    getAllHosting, getAllVisibleHosting,
+    getAllHosting,
     getOneHosting,
-    getSpotlightHosting,
     updateHosting
 } from "../controllers";
-import {isAdminAuthenticated} from "../middlewares/ensureAdminAuthenticated.middleware";
-import {uploadImagesMiddleware} from "../middlewares/uploadImage.middleware";
+import {isAdminAuthenticated} from "../middlewares";
+import {uploadImagesMiddleware} from "../middlewares";
 
 
 const router = express.Router();
 router.get("/", getAllHosting);
-router.get("/visible", getAllVisibleHosting);
-router.get("/spotlight", getSpotlightHosting);
 router.get("/:id", getOneHosting);
 router.use(isAdminAuthenticated);
 router.post("/", uploadImagesMiddleware, createHosting);

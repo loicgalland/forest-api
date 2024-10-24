@@ -1,10 +1,9 @@
 import {CreateHostingInputs} from "../dto/hosting.dto";
-import {Bed, BedArray, Hosting} from "../database/models";
+import {Bed, BedArray, File, Hosting, HostingDoc} from "../database/models";
 import {ValidatorRequest} from "../utility";
 import {calculateCapacity} from "../services/hosting.service";
 import mongoose from "mongoose";
-import {Request, Response, NextFunction} from "express";
-import {File} from "../database/models";
+import {NextFunction, Request, Response} from "express";
 
 
 interface Bed {
@@ -82,47 +81,55 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
     }
 }
 
-export const getAllVisibleHosting = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const hostings = await Hosting.find({visible: true})
-            .populate({
-                path: 'beds',
-                populate: {
-                    path: 'bed',
-                    model: 'Bed'
-                }
-            })
-            .populate( 'equipments')
-            .populate({
-                path: 'images'
-            })
-            .lean();
-
-        if (hostings.length) return res.jsonSuccess(hostings, 200)
-        return res.jsonSuccess('No hosting found', 200)
-
-    } catch (error) {
-        next(error)
-    }
-}
-
 export const getAllHosting = async (req: Request, res: Response, next: NextFunction) => {
-    //TODO Ajouter la récupération des données en fonction du params
-    const params = req.params;
+    const { fullAccess, spotlight } = req.query;
+    let hostings: HostingDoc[] = [];
+
     try {
-        const hostings = await Hosting.find()
-            .populate({
+        if(fullAccess === 'true') {
+            hostings = await Hosting.find()
+                .populate({
+                    path: 'beds',
+                    populate: {
+                        path: 'bed',
+                        model: 'Bed'
+                    }
+                })
+                .populate('equipments')
+                .populate({
+                    path: 'images'
+                })
+                .lean();
+        }
+        else if(spotlight === 'true') {
+            hostings = await Hosting.find({visible: true, isSpotlight: true}).populate({
                 path: 'beds',
                 populate: {
                     path: 'bed',
                     model: 'Bed'
                 }
             })
-            .populate( 'equipments')
-            .populate({
-                path: 'images'
-            })
-            .lean();
+                .populate('equipments')
+                .populate({
+                    path: 'images'
+                })
+                .lean();
+        }
+        else {
+            hostings = await Hosting.find({visible: true})
+                .populate({
+                    path: 'beds',
+                    populate: {
+                        path: 'bed',
+                        model: 'Bed'
+                    }
+                })
+                .populate('equipments')
+                .populate({
+                    path: 'images'
+                })
+                .lean();
+        }
 
         if (hostings.length) return res.jsonSuccess(hostings, 200)
         return res.jsonSuccess('No hosting found', 200)
@@ -250,31 +257,6 @@ export const deleteHosting = async (req: Request, res: Response, next: NextFunct
 
         await Hosting.findByIdAndDelete(id);
         return res.jsonSuccess('Hosting delete', 200)
-
-    } catch (error) {
-        next(error)
-    }
-}
-
-export const getSpotlightHosting = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-
-        const hostings = await Hosting.find({ visible: true, isSpotlight: true}).populate({
-            path: 'beds',
-            populate: {
-                path: 'bed',
-                model: 'Bed'
-            }
-        })
-            .populate('equipments')
-            .populate({
-                path: 'images'
-            })
-            .lean();
-
-
-        if (hostings.length) return res.jsonSuccess(hostings, 200)
-        return res.jsonSuccess('No hosting found', 200)
 
     } catch (error) {
         next(error)

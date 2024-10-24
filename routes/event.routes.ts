@@ -1,18 +1,16 @@
 import express from "express";
-import {isAdminAuthenticated} from "../middlewares/ensureAdminAuthenticated.middleware";
-import {uploadImagesMiddleware} from "../middlewares/uploadImage.middleware";
+import {isAdminAuthenticated} from "../middlewares";
+import {uploadImagesMiddleware} from "../middlewares";
 import {
     createEvent,
     deleteEvent,
     getAllEvents,
-    getAllVisibleEvents,
     getOneEvent,
     updateEvent
-} from "../controllers/event.controller";
+} from "../controllers";
 
 const router = express.Router();
 router.get("/", getAllEvents);
-router.get("/visible", getAllVisibleEvents);
 router.get("/:id", getOneEvent);
 router.use(isAdminAuthenticated);
 router.post('/', uploadImagesMiddleware, createEvent)

@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from "express";
-import {Event} from "../database/models/Event.model";
+import {Event, EventDoc} from "../database/models/Event.model";
 import {File} from "../database/models/File.model";
 import {ValidatorRequest} from "../utility/validate-request";
 import mongoose from "mongoose";
@@ -7,11 +7,21 @@ import {CreateEventInputs} from "../dto/event.dto";
 
 
 export const getAllEvents = async(req: Request, res: Response, next: NextFunction) => {
+    const { fullAccess, spotlight } = req.query;
+   let events: EventDoc[] = [];
+
     try {
-        const events = await Event.find()
-            .populate({
-                path: 'images'
-            })
+        if(fullAccess === 'true'){
+            events = await Event.find()
+                .populate({
+                    path: 'images'
+                })
+        } else {
+            events = await Event.find({visible: true})
+                .populate({
+                    path: 'images'
+                })
+        }
 
         if(events.length) return res.jsonSuccess(events, 200)
         return res.jsonSuccess('No events found', 200)
@@ -19,21 +29,6 @@ export const getAllEvents = async(req: Request, res: Response, next: NextFunctio
         next(error)
     }
 }
-
-export const getAllVisibleEvents = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        const events = await Event.find({visible: true})
-            .populate({
-                path: 'images'
-            })
-
-        if(events.length) return res.jsonSuccess(events, 200)
-        return res.jsonSuccess('No events found', 200)
-    } catch (error) {
-        next(error)
-    }
-}
-
 
 export const getOneEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,48 +1,34 @@
 import {Request, Response, NextFunction} from "express";
-import {Activity} from "../database/models/Activities.model";
-import {File} from "../database/models/File.model";
-import {ValidatorRequest} from "../utility/validate-request";
+import {Activity, ActivityDoc} from "../database/models";
+import {File} from "../database/models";
+import {ValidatorRequest} from "../utility";
 import mongoose from "mongoose";
 import {CreateActivityInputs} from "../dto/activity.dto";
 
-
-export const getAllVisibleActivities = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        const activities = await Activity.find({visible: true})
-            .populate({
-                path: 'images'
-            })
-
-        if(activities.length) return res.jsonSuccess(activities, 200)
-        return res.jsonSuccess('No activities found', 200)
-    } catch (error) {
-        next(error)
-    }
-}
-
 export const getAllActivities = async(req: Request, res: Response, next: NextFunction) => {
+    const { fullAccess, spotlight } = req.query;
+    let activities: ActivityDoc[] = [];
     try {
-        const activities = await Activity.find()
-            .populate({
-                path: 'images'
-            })
+        if(fullAccess === 'true'){
+            activities = await Activity.find()
+                .populate({
+                    path: 'images'
+                })
+        } else if(spotlight === 'true'){
+            activities = await Activity.find({visible: true, isSpotlight: true})
+                .populate({
+                    path: 'images'
+                })
+        } else {
+            activities = await Activity.find({visible: true})
+                .populate({
+                    path: 'images'
+                })
+        }
 
         if(activities.length) return res.jsonSuccess(activities, 200)
         return res.jsonSuccess('No activities found', 200)
     } catch (error) {
-        next(error)
-    }
-}
-
-export const getAllSpotlightActivities = async(req: Request, res: Response, next: NextFunction) => {
-    try {
-        const activities = await Activity.find({visible: true, isSpotlight: true})
-            .populate({
-                path: 'images'
-            })
-        if(activities.length) return res.jsonSuccess(activities, 200)
-        return res.jsonSuccess('No activities found', 200)
-    } catch (error){
         next(error)
     }
 }
