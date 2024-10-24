@@ -1,10 +1,5 @@
 import mongoose, {Document, Schema, Types} from "mongoose";
 
-interface ActivityInterface {
-    activity: Types.ObjectId[],
-    date: Date
-}
-
 export interface BookingDoc extends Document {
     startDate: Date;
     endDate: Date;
@@ -12,7 +7,7 @@ export interface BookingDoc extends Document {
     userId: Types.ObjectId;
     numberOfPerson: number;
     hostingId?: Types.ObjectId,
-    activities?: ActivityInterface[],
+    activities?: Types.ObjectId[],
     eventId?: Types.ObjectId[],
     status: string,
     totalPrice: number,
@@ -45,19 +40,11 @@ const BookingSchema = new Schema<BookingDoc>({
         ref: 'Hosting',
         required: false,
     },
-    activities: [
-        {
-            activity: {
-                type: Schema.Types.ObjectId,
-                ref: 'Activity',
-                required: false,
-            },
-            date: {
-                type: Date,
-                required: false,
-            }
-        }
-    ],
+    activities: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Activities',
+        required: false,
+    }],
     eventId: [{
         type: Schema.Types.ObjectId,
         ref: 'Event',
