@@ -1,10 +1,10 @@
 import {CreateHostingInputs} from "../dto/hosting.dto";
 import {Bed, BedArray, Hosting} from "../database/models";
-import {ValidatorRequest} from "../utility/validate-request";
+import {ValidatorRequest} from "../utility";
 import {calculateCapacity} from "../services/hosting.service";
 import mongoose from "mongoose";
 import {Request, Response, NextFunction} from "express";
-import {File} from "../database/models/File.model";
+import {File} from "../database/models";
 
 
 interface Bed {
@@ -13,19 +13,18 @@ interface Bed {
 }
 
 export const createHosting = async (req: Request, res: Response, next: NextFunction) => {
+    const body = req.body;
+
+    body.price = parseFloat(body.price);
+    body.visible = body.visible === 'true';
+    body.isSpotlight = body.isSpotlight === 'true';
+    body.beds = JSON.parse(body.beds);
+
+    body.equipments = JSON.parse(body.equipments).map((equipmentId: string) =>
+        new mongoose.Types.ObjectId(equipmentId)
+    );
+
     try {
-        const body = req.body;
-
-        console.log(body);
-        body.price = parseFloat(body.price);
-        body.visible = body.visible === 'true';
-        body.isSpotlight = body.isSpotlight === 'true';
-        body.beds = JSON.parse(body.beds);
-
-        body.equipments = JSON.parse(body.equipments).map((equipmentId: string) =>
-            new mongoose.Types.ObjectId(equipmentId)
-        );
-
         const {errors, input} = await ValidatorRequest(CreateHostingInputs, body);
 
         if (errors) {
@@ -68,7 +67,8 @@ export const createHosting = async (req: Request, res: Response, next: NextFunct
 
         const totalCapacity = await calculateCapacity(beds);
 
-        const newHosting = new Hosting({
+
+        const newHosting = await Hosting.create({
             ...input,
             beds,
             images: imageIds,
@@ -107,6 +107,8 @@ export const getAllVisibleHosting = async (req: Request, res: Response, next: Ne
 }
 
 export const getAllHosting = async (req: Request, res: Response, next: NextFunction) => {
+    //TODO Ajouter la récupération des données en fonction du params
+    const params = req.params;
     try {
         const hostings = await Hosting.find()
             .populate({

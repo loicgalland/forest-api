@@ -13,7 +13,7 @@ export const createFile = async (req: Request, res: Response, next: NextFunction
             return res.jsonError(errors, 400)
         };
 
-        const newFile = new File({...input})
+        const newFile = await File.create({...input})
         await newFile.save();
         return res.jsonSuccess(newFile, 201)
     } catch (error) {

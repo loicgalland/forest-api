@@ -19,7 +19,7 @@ export const createEquipment = async (req: Request, res: Response, next: NextFun
             return res.jsonError('This equipment already exist', 409)
         }
 
-        const newEquipment = new Equipment({...input})
+        const newEquipment = await Equipment.create({...input})
         await newEquipment.save();
         return res.jsonSuccess(newEquipment, 201)
     } catch (error) {

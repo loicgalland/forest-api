@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreateBedInputs} from "../dto/bed.dto";
 import {Bed} from "../database/models";
-import {ValidatorRequest} from "../utility/validate-request";
+import {ValidatorRequest} from "../utility";
 
 
 export const createBed = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,7 @@ export const createBed = async (req: Request, res: Response, next: NextFunction)
             return res.jsonError('This bed already exist', 409)
         }
 
-        const newBed = new Bed({...input})
+        const newBed = await Bed.create(input)
         await newBed.save();
         return res.jsonSuccess(newBed, 201)
     } catch (error) {
