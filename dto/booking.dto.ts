@@ -1,16 +1,10 @@
 import {IsArray, IsDate, IsNotEmpty, IsNumber, IsString} from "class-validator";
 
 export class CreateBookingInputs {
-    @IsNotEmpty()
-    @IsDate()
-    startDate: Date;
+    startDate: Date | null;
 
-    @IsNotEmpty()
-    @IsDate()
-    endDate: Date;
+    endDate: Date | null;
 
-    @IsNotEmpty()
-    @IsNumber()
     duration: number;
 
     @IsNotEmpty()
@@ -21,7 +15,6 @@ export class CreateBookingInputs {
     @IsNumber()
     numberOfPerson: number;
 
-    @IsString()
     hostingId: string;
 
     activities: string[];

@@ -6,8 +6,14 @@ import {Booking} from "../database/models";
 export const createBooking = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const body = req.body as CreateBookingInputs;
-        const startDate = new Date(body.startDate);
-        const endDate = new Date(body.endDate);
+        let startDate: Date | null = null;
+        let endDate: Date | null = null;
+        if (body.startDate) {
+            startDate = new Date(body.startDate);
+        }
+        if (body.endDate) {
+            endDate = new Date(body.endDate);
+        }
         const {errors, input} = await ValidatorRequest(CreateBookingInputs, {...body, startDate, endDate})
 
         if (errors) {
@@ -30,6 +36,7 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         const status = "pending"
 
         const newBooking = new Booking({...input, startDate, endDate, status})
+
         await newBooking.save();
         return res.jsonSuccess(newBooking, 201)
 

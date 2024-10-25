@@ -1,9 +1,9 @@
 import mongoose, {Document, Schema, Types} from "mongoose";
 
 export interface BookingDoc extends Document {
-    startDate: Date;
-    endDate: Date;
-    duration: number;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    duration?: number;
     userId: Types.ObjectId;
     numberOfPerson: number;
     hostingId?: Types.ObjectId,
@@ -16,15 +16,15 @@ export interface BookingDoc extends Document {
 const BookingSchema = new Schema<BookingDoc>({
     startDate: {
         type: Date,
-        required: true,
+        required: false,
     },
     endDate: {
         type: Date,
-        required: true,
+        required: false,
     },
     duration: {
         type: Number,
-        required: true,
+        required: false,
     },
     userId: {
         type: Schema.Types.ObjectId,
