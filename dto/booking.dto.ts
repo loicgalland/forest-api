@@ -24,9 +24,9 @@ export class CreateBookingInputs {
     @IsString()
     hostingId: string;
 
-    activityId: string[];
+    activities: string[];
 
-    eventId: string[];
+    events: string[];
 
     @IsNotEmpty()
     @IsNumber()

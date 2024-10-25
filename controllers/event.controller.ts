@@ -7,7 +7,7 @@ import {CreateEventInputs} from "../dto/event.dto";
 
 
 export const getAllEvents = async(req: Request, res: Response, next: NextFunction) => {
-    const { fullAccess, spotlight } = req.query;
+    const { fullAccess, startDate, endDate } = req.query;
    let events: EventDoc[] = [];
 
     try {
@@ -16,6 +16,17 @@ export const getAllEvents = async(req: Request, res: Response, next: NextFunctio
                 .populate({
                     path: 'images'
                 })
+        } else if(startDate && endDate ){
+            const start = new Date(startDate as string)
+            const end = new Date(endDate as string)
+            events = await Event.find({
+                date:{
+                    $gte: start,
+                    $lte: end
+                }
+            }).populate({
+                path: 'images'
+            })
         } else {
             events = await Event.find({visible: true})
                 .populate({

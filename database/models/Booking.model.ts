@@ -8,7 +8,7 @@ export interface BookingDoc extends Document {
     numberOfPerson: number;
     hostingId?: Types.ObjectId,
     activities?: Types.ObjectId[],
-    eventId?: Types.ObjectId[],
+    events?: Types.ObjectId[],
     status: string,
     totalPrice: number,
 }
@@ -45,7 +45,7 @@ const BookingSchema = new Schema<BookingDoc>({
         ref: 'Activities',
         required: false,
     }],
-    eventId: [{
+    events: [{
         type: Schema.Types.ObjectId,
         ref: 'Event',
         required: false,
