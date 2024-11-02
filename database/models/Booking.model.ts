@@ -42,7 +42,7 @@ const BookingSchema = new Schema<BookingDoc>({
     },
     activities: [{
         type: Schema.Types.ObjectId,
-        ref: 'Activities',
+        ref: 'Activity',
         required: false,
     }],
     events: [{

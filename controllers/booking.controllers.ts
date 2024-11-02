@@ -60,3 +60,28 @@ export const getAllHostingBookings = async (req: Request, res: Response, next: N
         next(error)
     }
 }
+
+export const getAllUserBookings = async (req: Request, res: Response, next: NextFunction) => {
+    const {id } = req.params;
+    try{
+        const bookings = await Booking.find({userId: id}).populate({
+            path: 'hostingId',
+            select: 'name'
+        }).populate({
+            path: 'activities',
+            select: 'name'
+        }).populate({
+            path: 'events',
+            select: 'name date'
+        })
+        if(!bookings){
+            return res.jsonError('No hosting found ', 404)
+        }
+        if(!bookings.length){
+            return res.jsonSuccess("No booking found for this hosting", 200)
+        }
+        return res.jsonSuccess(bookings, 200)
+    } catch(error){
+        next(error)
+    }
+}
