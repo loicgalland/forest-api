@@ -78,7 +78,7 @@ export const getAllUserBookings = async (req: Request, res: Response, next: Next
             return res.jsonError('No hosting found ', 404)
         }
         if(!bookings.length){
-            return res.jsonSuccess("No booking found for this hosting", 200)
+            return res.jsonSuccess(null, 200)
         }
         return res.jsonSuccess(bookings, 200)
     } catch(error){

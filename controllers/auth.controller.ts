@@ -58,7 +58,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             path: '/',
         });
 
-        return res.jsonSuccess({ message: "Login successful" }, 200);
+        return res.jsonSuccess({ message: "Login successful", userId: existingUser._id }, 200);
     } catch (error) {
         next(error);
     }
