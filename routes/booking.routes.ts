@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use(isAuthenticated);
 router.post("/", createBooking);
-router.get("/:id", getAllHostingBookings, );
+router.get("/:id", getAllHostingBookings);
 router.get("/user/:id", getAllUserBookings);
 router.patch('/:id', );
 router.delete("/:id", );

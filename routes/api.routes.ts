@@ -6,6 +6,7 @@ import {AuthRoutes} from "./auth.routes";
 import {ActivityRoutes} from "./activity.routes";
 import {EventRoutes} from "./event.routes";
 import {BookingRoutes} from "./booking.routes";
+import {StripeRoutes} from "./payement.routes";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/hosting', HostingRoutes)
 router.use('/activity', ActivityRoutes)
 router.use('/event', EventRoutes)
 router.use('/booking', BookingRoutes)
+router.use('/payment', StripeRoutes)
 
 export { router as ApiRoutes }
