@@ -85,3 +85,18 @@ export const getAllUserBookings = async (req: Request, res: Response, next: Next
         next(error)
     }
 }
+
+export const updateBookingStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const {id } = req.params;
+    const {status} = req.body;
+    try {
+        const booking = await Booking.findById(id);
+        if(!booking) return res.jsonError('No booking found ', 404)
+        booking.status = status;
+
+        const savedBooking = await booking.save();
+        return res.jsonSuccess(savedBooking, 200);
+    } catch(error){
+        next(error)
+    }
+}
