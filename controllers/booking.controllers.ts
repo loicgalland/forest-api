@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from 'express';
 import {ValidatorRequest} from "../utility/validate-request";
 import {CreateBookingInputs} from "../dto/booking.dto";
 import {Booking} from "../database/models";
+import {Event} from "../database/models";
 
 export const createBooking = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -36,6 +37,13 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         const status = "pending"
 
         const newBooking = new Booking({...input, startDate, endDate, status})
+
+        const eventsId = body.events
+        for(const eventId of eventsId) {
+            await Event.findByIdAndUpdate(eventId, {
+                $inc: { placeAvailable: -body.numberOfPerson }
+            });
+        }
 
         await newBooking.save();
         return res.jsonSuccess(newBooking, 201)
