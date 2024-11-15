@@ -1,8 +1,10 @@
 import {Request, Response, NextFunction} from "express";
 import {isAuthenticated} from "./ensureAuthenticated.middleware";
 import jwt from "jsonwebtoken";
-import {SECRET_KEY} from "../config";
+import dotenv from "dotenv";
 
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 describe('EnsureAuthenticatedMiddleware', () => {
     describe('Happy path', () => {

@@ -2,7 +2,10 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import {Request} from "express";
 import {AuthPayload} from "../dto/Auth.dto";
-import {SECRET_KEY} from "../config";
+import dotenv from "dotenv";
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 export const generateSalt =  () => {
     return  bcrypt.genSalt()

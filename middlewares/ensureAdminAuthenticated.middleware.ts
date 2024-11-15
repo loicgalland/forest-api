@@ -1,7 +1,10 @@
 import {NextFunction, Request, Response} from "express";
 import jwt, {TokenExpiredError} from "jsonwebtoken";
 import {AdminPayload} from "../dto/Admin.dto";
-import {SECRET_KEY} from "../config";
+import dotenv from "dotenv";
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 interface RequestWithUser extends Request {
     user?: AdminPayload;

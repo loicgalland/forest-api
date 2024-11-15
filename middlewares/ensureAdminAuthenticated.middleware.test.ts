@@ -1,10 +1,14 @@
 import {Request, Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
-import {SECRET_KEY} from "../config";
 import {isAdminAuthenticated} from "./ensureAdminAuthenticated.middleware";
+import dotenv from "dotenv";
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 
 describe('EnsureAuthenticatedMiddleware', () => {
+
     describe('Happy path', () => {
         let req: Partial<Request>;
         let res: Partial<Response>;

@@ -1,6 +1,9 @@
 import {NextFunction, Request, Response} from "express";
-import {SECRET_KEY} from "../config";
 import jwt, {TokenExpiredError} from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     try {
