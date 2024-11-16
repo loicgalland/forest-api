@@ -21,12 +21,11 @@ export const processStripeSessionPayment = async (req: Request, res: Response, n
 }
 
 export const cashBackSession = async (req: Request, res: Response, next: NextFunction) => {
-    const {bookingId} = req.params;
+    const {id} = req.params;
     try {
-       const refund = await getCashBackService(bookingId);
-       if(!refund) return res.jsonError("Cash Back error", 500);
+       const refund = await getCashBackService(id);
+       if(refund === null) return res.jsonError("Cash Back error", 500);
         return res.jsonSuccess(refund, 200)
-
     } catch (error) {
         next(error)
     }

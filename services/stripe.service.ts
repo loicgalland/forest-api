@@ -48,6 +48,7 @@ export const getCashBackService = async (bookingId: string) => {
         ? stripeSession.payment_intent
         : stripeSession.payment_intent.id;
 
+
     const refund = await stripe.refunds.create({
         payment_intent: paymentIntentId,
     });
