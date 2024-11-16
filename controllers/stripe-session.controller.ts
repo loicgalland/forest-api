@@ -5,7 +5,6 @@ export const processStripeSessionPayment = async (req: Request, res: Response, n
     const { amount, currency, bookingId } = req.body;
     try{
         const session = await createStripeSession(currency, amount, bookingId);
-        console.log(session)
         res.json({ id: session.id });
     } catch(error){
         next(error)
