@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
 import {isAdminAuthenticated} from "./ensureAdminAuthenticated.middleware";
 import dotenv from "dotenv";
@@ -41,8 +41,7 @@ describe('EnsureAuthenticatedMiddleware', () => {
             expect(next).not.toHaveBeenCalled();
         });
         it('Should authenticate the user and call next if a valid token is provided', () => {
-            const token = jwt.sign({ id: "123", name: "John Doe", role: "admin" }, SECRET_KEY);
-            req.cookies.token = token;
+            req.cookies.token = jwt.sign({id: "123", name: "John Doe", role: "admin"}, SECRET_KEY);
 
             isAdminAuthenticated(req as Request, res as Response, next);
 
