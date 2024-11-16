@@ -69,6 +69,16 @@ export const getAllHostingBookings = async (req: Request, res: Response, next: N
     }
 }
 
+export const getAllBooking = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bookings = await Booking.find()
+        if(bookings.length) return res.jsonSuccess(bookings, 200)
+        return res.jsonSuccess("'No bookings", 200)
+    } catch (error){
+        next(error)
+    }
+}
+
 export const getAllUserBookings = async (req: Request, res: Response, next: NextFunction) => {
     const {id } = req.params;
     try{

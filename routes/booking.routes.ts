@@ -1,7 +1,7 @@
 import express from "express";
 import {isAdminAuthenticated, isAuthenticated} from "../middlewares";
 import {
-    createBooking,
+    createBooking, getAllBooking,
     getAllHostingBookings,
     getAllUserBookings,
     updateBookingStatus
@@ -20,7 +20,7 @@ router.delete("/:id", );
 router.put("/:id", updateBookingStatus)
 
 router.use(isAdminAuthenticated);
-router.get("/", );
+router.get("/", getAllBooking);
 
 
 
