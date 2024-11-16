@@ -11,6 +11,7 @@ export interface BookingDoc extends Document {
     events?: Types.ObjectId[],
     status: string,
     totalPrice: number,
+    stripeSessionId: string | null,
 }
 
 const BookingSchema = new Schema<BookingDoc>({
@@ -57,6 +58,10 @@ const BookingSchema = new Schema<BookingDoc>({
     totalPrice: {
         type: Number,
         required: true,
+    },
+    stripeSessionId: {
+        type: String,
+        required: false,
     }
 
 }, {
