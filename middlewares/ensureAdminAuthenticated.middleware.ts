@@ -1,7 +1,8 @@
 import {NextFunction, Request, Response} from "express";
-import jwt, {TokenExpiredError} from "jsonwebtoken";
+import {TokenExpiredError} from "jsonwebtoken";
 import {AdminPayload} from "../dto/Admin.dto";
-import {SECRET_KEY} from "../config";
+import {decodeJwt} from "../utility";
+
 
 interface RequestWithUser extends Request {
     user?: AdminPayload;
@@ -15,7 +16,7 @@ export const isAdminAuthenticated = (req: Request, res: Response, next: NextFunc
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const user = jwt.verify(token, SECRET_KEY) as AdminPayload;
+        const user = decodeJwt(token) as AdminPayload;
 
         if (user && user.role === "admin") {
             req.user = user;

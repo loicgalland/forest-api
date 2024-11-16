@@ -1,10 +1,14 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
-import {SECRET_KEY} from "../config";
 import {isAdminAuthenticated} from "./ensureAdminAuthenticated.middleware";
+import dotenv from "dotenv";
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY!;
 
 
 describe('EnsureAuthenticatedMiddleware', () => {
+
     describe('Happy path', () => {
         let req: Partial<Request>;
         let res: Partial<Response>;
@@ -37,8 +41,7 @@ describe('EnsureAuthenticatedMiddleware', () => {
             expect(next).not.toHaveBeenCalled();
         });
         it('Should authenticate the user and call next if a valid token is provided', () => {
-            const token = jwt.sign({ id: "123", name: "John Doe", role: "admin" }, SECRET_KEY);
-            req.cookies.token = token;
+            req.cookies.token = jwt.sign({id: "123", name: "John Doe", role: "admin"}, SECRET_KEY);
 
             isAdminAuthenticated(req as Request, res as Response, next);
 

@@ -1,11 +1,8 @@
 import {Request, Response, NextFunction} from "express";
 import {CreateUserInputs, LoginUserInputs} from "../dto/user.dto";
 import {User} from "../database/models/User.model";
-import {generateSalt, generateSignature, hashPassword, isValidatedPassword} from "../utility";
-import jwt from "jsonwebtoken";
-import {SECRET_KEY} from "../config";
+import {decodeJwt, generateSalt, generateSignature, hashPassword, isValidatedPassword} from "../utility";
 import {AuthPayload} from "../dto/Auth.dto";
-
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -85,7 +82,7 @@ export const getUserRole = async (req: Request, res: Response, next: NextFunctio
         res.json({ role: null, userId: null});
     }
     try {
-        const decoded = jwt.verify(token, SECRET_KEY) as AuthPayload;
+        const decoded = decodeJwt(token) as AuthPayload;
         res.json({ role: decoded.role, userId: decoded._id });
     } catch (error) {
         next(error)

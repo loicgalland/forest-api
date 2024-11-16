@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import 'reflect-metadata';
-import {MONGO_URI} from "./config/db";
 import {errorHandler, jsonResponseMiddleware} from "./middlewares";
 import {ApiRoutes} from "./routes/api.routes";
 import  path from "path";
@@ -11,7 +10,9 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 
-mongoose.connect(MONGO_URI)
+const mongoURI = process.env.MONGO_URI!;
+
+mongoose.connect(mongoURI)
     .then(() => console.log('✅ Connexion à la db établie'))
     .catch((error: Error) => console.log(error))
 

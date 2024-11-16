@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {SECRET_KEY} from "../config";
-import jwt, {TokenExpiredError} from "jsonwebtoken";
+import {TokenExpiredError} from "jsonwebtoken";
+import {decodeJwt} from "../utility";
+
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -9,7 +10,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        req.user = jwt.verify(token, SECRET_KEY);
+        req.user = decodeJwt(token)
         next();
     } catch (error) {
         if (error instanceof TokenExpiredError) {
