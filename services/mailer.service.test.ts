@@ -28,7 +28,7 @@ describe("processMail", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Réinitialiser les mocks avant chaque test
+    jest.clearAllMocks();
     (Hosting.findById as jest.Mock).mockResolvedValue(mockHosting);
     (User.findById as jest.Mock).mockResolvedValue(mockUser);
     (formatDate as jest.Mock)

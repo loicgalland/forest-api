@@ -6,10 +6,10 @@ import { formatDate } from "./date.service";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Utilisation du service Gmail
+  service: "gmail",
   auth: {
-    user: process.env.MAILER_USER, // Ton email Gmail
-    pass: process.env.MAILER_PASSWORD, // Mot de passe spécifique à l'application
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASSWORD,
   },
 });
 
