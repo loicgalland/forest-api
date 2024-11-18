@@ -2,7 +2,20 @@ import { getCashBackService } from "./stripe.service";
 import { Booking } from "../database/models";
 
 jest.mock("../database/models/Booking.model");
-
+jest.mock("stripe", () => {
+  return jest.fn().mockImplementation(() => ({
+    checkout: {
+      sessions: {
+        retrieve: jest.fn().mockResolvedValue({
+          payment_intent: "mock_payment_intent_id",
+        }),
+      },
+    },
+    refunds: {
+      create: jest.fn().mockResolvedValue("mock_refund"),
+    },
+  }));
+});
 describe("getCashBackService", () => {
   it("should return null if booking does not exist", async () => {
     (Booking.findById as jest.Mock).mockResolvedValue(null);
