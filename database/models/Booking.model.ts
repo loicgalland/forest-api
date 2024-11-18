@@ -1,79 +1,85 @@
-import mongoose, {Document, Schema, Types} from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface BookingDoc extends Document {
-    startDate?: Date | null;
-    endDate?: Date | null;
-    duration?: number;
-    userId: Types.ObjectId;
-    numberOfPerson: number;
-    hostingId?: Types.ObjectId,
-    activities?: Types.ObjectId[],
-    events?: Types.ObjectId[],
-    status: string,
-    totalPrice: number,
-    stripeSessionId: string | null,
+  startDate?: Date | null;
+  endDate?: Date | null;
+  duration?: number;
+  userId: Types.ObjectId;
+  numberOfPerson: number;
+  hostingId?: Types.ObjectId;
+  activities?: Types.ObjectId[];
+  events?: Types.ObjectId[];
+  status: string;
+  totalPrice: number;
+  stripeSessionId: string | null;
 }
 
-const BookingSchema = new Schema<BookingDoc>({
+const BookingSchema = new Schema<BookingDoc>(
+  {
     startDate: {
-        type: Date,
-        required: false,
+      type: Date,
+      required: false,
     },
     endDate: {
-        type: Date,
-        required: false,
+      type: Date,
+      required: false,
     },
     duration: {
-        type: Number,
-        required: false,
+      type: Number,
+      required: false,
     },
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     numberOfPerson: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     hostingId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Hosting',
-        required: false,
+      type: Schema.Types.ObjectId,
+      ref: "Hosting",
+      required: false,
     },
-    activities: [{
+    activities: [
+      {
         type: Schema.Types.ObjectId,
-        ref: 'Activity',
+        ref: "Activity",
         required: false,
-    }],
-    events: [{
+      },
+    ],
+    events: [
+      {
         type: Schema.Types.ObjectId,
-        ref: 'Event',
+        ref: "Event",
         required: false,
-    }],
+      },
+    ],
     status: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     totalPrice: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     stripeSessionId: {
-        type: String,
-        required: false,
-    }
-
-}, {
+      type: String,
+      required: false,
+    },
+  },
+  {
     timestamps: true,
     toJSON: {
-        transform(doc, ret, option) {
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
-        }
-    }
-})
+      transform(doc, ret) {
+        delete ret.__v;
+        delete ret.createdAt;
+        delete ret.updatedAt;
+      },
+    },
+  },
+);
 
-const Booking = mongoose.model<BookingDoc>('Booking', BookingSchema);
-export {Booking};
+const Booking = mongoose.model<BookingDoc>("Booking", BookingSchema);
+export { Booking };

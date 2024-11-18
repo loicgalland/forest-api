@@ -1,27 +1,27 @@
-import {IsArray, IsDate, IsNotEmpty, IsNumber, IsString} from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateBookingInputs {
-    startDate: Date | null;
+  startDate: Date | null;
 
-    endDate: Date | null;
+  endDate: Date | null;
 
-    duration: number;
+  duration: number;
 
-    @IsNotEmpty()
-    @IsString()
-    userId: string;
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
 
-    @IsNotEmpty()
-    @IsNumber()
-    numberOfPerson: number;
+  @IsNotEmpty()
+  @IsNumber()
+  numberOfPerson: number;
 
-    hostingId: string;
+  hostingId: string;
 
-    activities: string[];
+  activities: string[];
 
-    events: string[];
+  events: string[];
 
-    @IsNotEmpty()
-    @IsNumber()
-    totalPrice: number;
+  @IsNotEmpty()
+  @IsNumber()
+  totalPrice: number;
 }

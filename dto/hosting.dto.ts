@@ -1,42 +1,41 @@
-import {IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested} from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export interface CreateBedInput {
-    bedId: string;
-    quantity: number;
+  bedId: string;
+  quantity: number;
 }
 
-
 export class CreateHostingInputs {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    description: string;
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 
-    @IsBoolean()
-    @IsNotEmpty()
-    isSpotlight: boolean;
+  @IsBoolean()
+  @IsNotEmpty()
+  isSpotlight: boolean;
 
-    @IsBoolean()
-    @IsNotEmpty()
-    visible: boolean;
+  @IsBoolean()
+  @IsNotEmpty()
+  visible: boolean;
 
-    beds: CreateBedInput[];
+  beds: CreateBedInput[];
 
-    equipments: string[];
+  equipments: string[];
 
-    @IsNotEmpty()
-    @IsNumber()
-    price: number;
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
 }
 
 export class UpdateHostingInputs {
-    name?: string;
-    description?: string;
-    isSpotLight?: boolean;
-    beds?: CreateBedInput[];
-    equipments?: string[];
-    prices: number;
+  name?: string;
+  description?: string;
+  isSpotLight?: boolean;
+  beds?: CreateBedInput[];
+  equipments?: string[];
+  prices: number;
 }
