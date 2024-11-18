@@ -1,4 +1,4 @@
-export const formatDate = (date: Date | null | undefined) => {
+export const formatDate = (date: Date | string | null | undefined) => {
   if (date) {
     const parsedDate = new Date(date);
     return parsedDate
@@ -6,9 +6,10 @@ export const formatDate = (date: Date | null | undefined) => {
         day: "2-digit",
         month: "short",
         year: "numeric",
+        timeZone: "UTC",
       })
       .replace(".", "");
   } else {
-    return "Non définie";
+    return "Undefinded";
   }
 };
