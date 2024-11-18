@@ -55,14 +55,13 @@ export const processMail = async (type: string, booking: BookingDoc) => {
       to = user ? user.email : "";
       subject = `FOREST - Récapitulatif de réservation : ${hosting ? hosting.name : ""}`;
       text = `
-<p style="font-size: 17px; color: #482A2A">Toute l'équipe de Forest vous remercie !</p>
+      <p style="font-size: 17px; color: #482A2A">Toute l'équipe de Forest vous remercie !</p>
       <p style="font-size: 17px; color: #482A2A">
       Votre réservation est faite pour l'hébergement : <strong>${hosting ? hosting.name : ""}</strong>,<br>
       </p>
-      <p style="font-size: 15px; color: #482A2A">Date d'arrivée : <strong>${formatDate(booking.startDate)}</strong>,<br>Date de départ :  <strong>${formatDate(booking.endDate)}</strong>,<br>Nombre de personne : <strong>${booking.numberOfPerson}</strong></p>
-        <p style="font-size: 17px; color: #482A2A">Vous recevrez un mail quand votre réservation sera confirmée par notre équipe</p>
-        <p style="font-size: 17px; color: #482A2A">Belle journée à vous, à très vite !</p>      
-`;
+      <p style="font-size: 15px; color: #482A2A">Date d'arrivée : <strong>${formatDate(booking.startDate)}</strong>,<br>Date de départ : <strong>${formatDate(booking.endDate)}</strong>,<br>Nombre de personne : <strong>${booking.numberOfPerson}</strong></p>
+      <p style="font-size: 17px; color: #482A2A">Vous recevrez un mail quand votre réservation sera confirmée par notre équipe</p>
+      <p style="font-size: 17px; color: #482A2A">Belle journée à vous, à très vite !</p>`;
       return { to, subject, text };
     case "cancelBookingConfirmation":
       to = process.env.MAILER_USER;
@@ -91,7 +90,7 @@ export const processMail = async (type: string, booking: BookingDoc) => {
       Identifiants: 
       <ul>
         <li>mail : ${user ? user.email : ""}</li>
-        <li> nom :  ${user ? user.lastName : ""}</li>
+        <li>nom :  ${user ? user.lastName : ""}</li>
         <li>prénom : ${user ? user.firstName : ""}</li>
       </ul>
       </p>`;
