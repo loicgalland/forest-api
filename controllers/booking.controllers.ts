@@ -31,17 +31,20 @@ export const createBooking = async (
     if (errors) {
       return res.jsonError(errors, 400);
     }
-    const existingReservations = await Booking.find({
-      hostingId: body.hostingId,
-      $or: [
-        { startDate: { $lt: body.endDate, $gte: body.startDate } },
-        { endDate: { $gt: body.startDate, $lte: body.endDate } },
-        {
-          startDate: { $gte: body.startDate, $lte: body.endDate },
-          endDate: { $lte: body.endDate },
-        },
-      ],
-    });
+    let existingReservations = [];
+    if (body.hostingId) {
+      existingReservations = await Booking.find({
+        hostingId: body.hostingId,
+        $or: [
+          { startDate: { $lt: body.endDate, $gte: body.startDate } },
+          { endDate: { $gt: body.startDate, $lte: body.endDate } },
+          {
+            startDate: { $gte: body.startDate, $lte: body.endDate },
+            endDate: { $lte: body.endDate },
+          },
+        ],
+      });
+    }
 
     if (existingReservations.length) {
       return res.status(409).json({ message: "Dates not available" });
@@ -52,6 +55,11 @@ export const createBooking = async (
 
     const eventsId = body.events;
     for (const eventId of eventsId) {
+      const event = await Event.findById(eventId);
+      if (event && event.placeAvailable < body.numberOfPerson) {
+        return res.jsonSuccess("No more place available", 200);
+      }
+
       await Event.findByIdAndUpdate(eventId, {
         $inc: { placeAvailable: -body.numberOfPerson },
       });
