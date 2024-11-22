@@ -41,7 +41,7 @@ export const getAllEquipments = async (
     const equipments = await Equipment.find({});
 
     if (equipments.length) return res.jsonSuccess(equipments, 200);
-    return res.jsonError("No equipments found", 404);
+    return res.jsonSuccess(null, 200);
   } catch (error) {
     next(error);
   }

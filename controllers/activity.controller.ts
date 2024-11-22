@@ -31,7 +31,7 @@ export const getAllActivities = async (
     }
 
     if (activities.length) return res.jsonSuccess(activities, 200);
-    return res.jsonSuccess("No activities found", 200);
+    return res.jsonSuccess(null, 200);
   } catch (error) {
     next(error);
   }

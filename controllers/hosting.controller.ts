@@ -140,7 +140,7 @@ export const getAllHosting = async (
     }
 
     if (hostings.length) return res.jsonSuccess(hostings, 200);
-    return res.jsonSuccess("No hosting found", 200);
+    return res.jsonSuccess(null, 200);
   } catch (error) {
     next(error);
   }
