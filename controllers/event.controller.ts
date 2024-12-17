@@ -14,8 +14,10 @@ export const getAllEvents = async (
   let events: EventDoc[] = [];
 
   try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     if (fullAccess === "true") {
-      events = await Event.find().populate({
+      events = await Event.find({}).populate({
         path: "images",
       });
     } else if (startDate && endDate) {
@@ -30,7 +32,10 @@ export const getAllEvents = async (
         path: "images",
       });
     } else {
-      events = await Event.find({ visible: true }).populate({
+      events = await Event.find({
+        visible: true,
+        date: { $gte: today },
+      }).populate({
         path: "images",
       });
     }
