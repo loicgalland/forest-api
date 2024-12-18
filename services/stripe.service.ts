@@ -3,9 +3,7 @@ import dotenv from "dotenv";
 import { Booking } from "../database/models";
 
 dotenv.config();
-const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
-  apiVersion: "2024-10-28.acacia",
-});
+const stripe = new Stripe(process.env.STRIPE_API_KEY!);
 
 export const createStripeSession = (
   currency: string,
