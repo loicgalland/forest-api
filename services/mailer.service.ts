@@ -114,3 +114,29 @@ export const processMail = async (type: string, booking: BookingDoc) => {
       return { to, subject, text };
   }
 };
+
+export const processContactMail = async (
+  subject: string,
+  text: string,
+  fromEmail: string,
+) => {
+  const message = `
+      <p style="font-size: 17px; color: #482A2A">Contact</p>
+      <p style="font-size: 17px; color: #482A2A">
+      De la part de : ${fromEmail}
+      </p>
+      <p style="font-size: 17px; color: #482A2A">Contenu : <br>
+       ${text}
+      </p>      
+`;
+  const mailOptions = {
+    to: process.env.MAILER_USER,
+    subject: subject,
+    html: message,
+  };
+  try {
+    return await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error in sending contact email:", error);
+  }
+};
